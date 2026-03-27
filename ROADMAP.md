@@ -22,21 +22,17 @@ Badge w nagłówku: `3 problemy · 2 ostrzeżenia` — zmienia się w czasie rze
 
 ---
 
-## Faza 2 — Rozbudowa zawartości
+## Faza 2 — Rozbudowa zawartości ✅ ZREALIZOWANA
 
-### Więcej typów stron
-Przełącznik typu strony (zamiast tylko LocalBusiness):
-- `Artykuł blogowy` — Article schema, autor jako E-E-A-T
-- `Strona produktu e-commerce` — Product schema, cena, recenzje
-- `Strona główna` — Organization schema, logo
+### Więcej typów stron ✅
+Przełącznik: Agencja SEO (LocalBusiness) / Artykuł blogowy (Article) / Produkt e-commerce (Product) / Strona główna (Organization).
+Każdy typ ma własną treść podglądu, schema i dynamiczne dane w analizach.
 
-Każdy typ = inne priorytety i efekty w analizie.
+### Tooltips ✅
+Hover na etykiecie każdego elementu w podglądzie → dymka z opisem co to jest i dlaczego ma znaczenie.
 
-### Tryb porównania A vs B
-Zablokuj aktualny stan jako "Przed", ustaw drugi i porównaj obok siebie.
-
-### Szczegółowe tooltips
-Każdy toggle ma ikonę `?` → mini-wyjaśnienie + link do wpisu w bazie wiedzy.
+### Tryb porównania A vs B — WYKREŚLONY
+Layoutowo niewykonalne bez chaosu (potrzeba 4 kolumn). Zastąpiony przez presety + share link — osiągają ten sam efekt edukacyjny.
 
 ---
 
