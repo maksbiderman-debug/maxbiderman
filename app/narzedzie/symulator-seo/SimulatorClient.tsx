@@ -520,9 +520,8 @@ function PreviewBlock({
           <Link
             href={docUrl}
             onClick={(e) => e.stopPropagation()}
-            className="ml-1 text-zinc-300 hover:text-purple-600 transition-colors"
-            title="Baza wiedzy →"
-          >↗</Link>
+            className="ml-1 text-zinc-300 hover:text-purple-600 transition-colors text-xs"
+          >↗ {def?.label}</Link>
         )}
       </p>
     </div>
@@ -826,7 +825,7 @@ export default function SimulatorClient() {
                 className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.robots ? "opacity-100" : "opacity-30"}`}>
                 <span className="text-zinc-500">&lt;meta </span><span className="text-emerald-400">name</span><span className="text-zinc-500">=</span><span className="text-amber-300">&quot;robots&quot;</span><span className="text-zinc-500"> content=</span><span className="text-amber-300">&quot;{active.robots ? "index, follow" : "noindex"}&quot;</span><span className="text-zinc-500"> /&gt;</span>
                 {!active.robots && <span className="text-red-400 ml-2">← strona niewidoczna!</span>}
-                <Link href="/baza-wiedzy/seo/robots-txt" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors" title="Baza wiedzy: robots.txt">↗</Link>
+                <Link href="/baza-wiedzy/seo/robots-txt" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors text-xs">↗ robots.txt</Link>
               </div>
 
               <div onClick={() => toggle("title")} title={active.title ? "Wyłącz title" : "Włącz title"}
@@ -847,13 +846,13 @@ export default function SimulatorClient() {
               <div onClick={() => toggle("og")} title={active.og ? "Wyłącz Open Graph" : "Włącz Open Graph"}
                 className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.og ? "opacity-100" : "opacity-30"}`}>
                 <span className="text-zinc-500">&lt;meta </span><span className="text-emerald-400">property</span><span className="text-zinc-500">=</span><span className="text-amber-300">&quot;og:title&quot;</span><span className="text-zinc-500"> content=</span><span className="text-amber-300">&quot;{content.ogTitle}&quot;</span><span className="text-zinc-500"> /&gt;</span>
-                <Link href="/baza-wiedzy/seo/open-graph" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors" title="Baza wiedzy: Open Graph">↗</Link>
+                <Link href="/baza-wiedzy/seo/open-graph" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors text-xs">↗ Open Graph</Link>
               </div>
 
               <div onClick={() => toggle("schema")} title={active.schema ? "Wyłącz Schema markup" : "Włącz Schema markup"}
                 className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.schema ? "opacity-100" : "opacity-30"}`}>
                 <span className="text-zinc-500">&lt;script </span><span className="text-emerald-400">type</span><span className="text-zinc-500">=</span><span className="text-amber-300">&quot;application/ld+json&quot;</span><span className="text-zinc-500">&gt; </span><span className="text-blue-400">{`{ "@type": "${content.schemaType}" }`}</span><span className="text-zinc-500"> &lt;/script&gt;</span>
-                <Link href="/baza-wiedzy/seo/schema-markup" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors" title="Baza wiedzy: Schema markup">↗</Link>
+                <Link href="/baza-wiedzy/seo/schema-markup" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors text-xs">↗ Schema markup</Link>
               </div>
 
             </div>
