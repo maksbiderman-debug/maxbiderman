@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import SchemaOrg from "@/app/components/SchemaOrg";
 
 const posts = [
   {
@@ -49,6 +50,13 @@ export default async function BlogPostPage({
 
   return (
     <main className="max-w-2xl mx-auto px-6 py-24">
+      <SchemaOrg
+        type="Article"
+        title={post.title}
+        description={post.description}
+        datePublished={post.date}
+        url={`https://maxbiderman.pl/blog/${post.slug}`}
+      />
       <Link
         href="/blog"
         className="text-sm text-zinc-400 hover:text-zinc-600 transition-colors mb-8 inline-block"
