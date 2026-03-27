@@ -22,6 +22,11 @@ const entries = [
     title: "Open Graph",
     description: "Jak Twoja strona wygląda gdy ktoś wklei link na LinkedIn czy Facebooku.",
   },
+  {
+    slug: "schema-markup",
+    title: "Schema markup",
+    description: "Dane strukturalne które pomagają Google lepiej rozumieć Twoją treść i wyświetlać rich snippets.",
+  },
 ];
 
 export default function SeoPage() {

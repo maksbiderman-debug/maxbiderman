@@ -51,4 +51,10 @@ export const searchIndex: SearchItem[] = [
     url: "/baza-wiedzy/seo/open-graph",
     category: "SEO",
   },
+  {
+    title: "Schema markup",
+    description: "Dane strukturalne które pomagają Google lepiej rozumieć Twoją treść i wyświetlać rich snippets.",
+    url: "/baza-wiedzy/seo/schema-markup",
+    category: "SEO",
+  },
 ];

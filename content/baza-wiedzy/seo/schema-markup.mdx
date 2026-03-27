@@ -1,0 +1,40 @@
+# Schema markup
+
+Schema markup (inaczej dane strukturalne) to kod który mówi Google nie tylko że masz artykuł, ale też kto go napisał, kiedy, o czym jest i jak się nazywa autor. Dzięki temu Google może wyświetlić Twoją stronę w wynikach wyszukiwania w bogatszej formie.
+
+## Rich snippets
+
+Rich snippets to rozszerzone wyniki wyszukiwania które wyróżniają się na tle zwykłych linków. Możesz zobaczyć je w Google jako:
+
+- Oceny gwiazdkowe przy przepisach i produktach
+- Daty i autor przy artykułach
+- Pytania i odpowiedzi (FAQ)
+- Ceny i dostępność przy sklepach
+- Czas trwania filmów
+
+## Format JSON-LD
+
+Google preferuje format JSON-LD — to blok kodu umieszczony w sekcji `<head>` strony. Na tym blogu każdy artykuł ma schema typu `Article` z informacjami o tytule, dacie publikacji i autorze.
+
+Przykład jak wygląda schema dla artykułu:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Tytuł artykułu",
+  "datePublished": "2026-03-27",
+  "author": {
+    "@type": "Person",
+    "name": "Maksymilian Biderman"
+  }
+}
+```
+
+## Jak sprawdzić?
+
+Google udostępnia narzędzie **Rich Results Test** — wklejasz adres swojej strony i widzisz czy schema jest poprawna i czy kwalifikujesz się do rich snippets. Możesz też użyć zakładki **Schema** w rozszerzeniu Detailed SEO Extension.
+
+## Czy schema bezpośrednio poprawia pozycje?
+
+Nie wprost. Schema nie jest czynnikiem rankingowym, ale rich snippets zwiększają CTR (współczynnik kliknięć) w wynikach wyszukiwania, co pośrednio wpływa na widoczność.
