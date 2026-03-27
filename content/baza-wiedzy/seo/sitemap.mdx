@@ -1,0 +1,23 @@
+# Sitemap.xml
+
+Sitemap to plik który mówi Google jakie strony istnieją na Twojej witrynie. Zamiast czekać aż robot Google sam odkryje wszystkie podstrony klikając w linki, dajesz mu gotową listę adresów URL.
+
+Możesz go zobaczyć wchodząc na dowolną stronę pod adresem `/sitemap.xml`.
+
+## Co zawiera?
+
+Każda strona w sitemapie ma trzy parametry:
+
+- **priority** — ważność strony w skali 0-1. Strona główna to zwykle 1, artykuły 0.8, podkategorie 0.7.
+- **changeFrequency** — jak często aktualizujesz tę stronę. Google traktuje to jako wskazówkę kiedy wracać i ponownie indeksować.
+- **lastModified** — data ostatniej zmiany treści.
+
+## Dlaczego to ważne?
+
+Nowe strony mają mało linków zewnętrznych — Google może je po prostu nie znaleźć przez długi czas. Sitemap skraca ten czas i daje pewność że wszystkie podstrony zostaną zaindeksowane.
+
+## Jak zgłosić sitemap do Google?
+
+Po stworzeniu sitemapa warto zgłosić go ręcznie w Google Search Console: **Indeksowanie > Mapy witryn > wpisz adres sitemapa > Prześlij**.
+
+Google nie wymaga zgłoszenia (sam go znajdzie przez robots.txt), ale manualne zgłoszenie przyspiesza sprawę.

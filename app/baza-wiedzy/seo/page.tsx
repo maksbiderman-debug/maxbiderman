@@ -3,9 +3,16 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "SEO – Baza wiedzy – Maks Biderman",
-  description:
-    "Notatki i zasoby o SEO technicznym, on-page i link buildingu.",
+  description: "Notatki i zasoby o SEO technicznym, on-page i link buildingu.",
 };
+
+const entries = [
+  {
+    slug: "sitemap",
+    title: "Sitemap.xml",
+    description: "Czym jest sitemap i dlaczego pomaga Google indeksować Twoją stronę.",
+  },
+];
 
 export default function SeoPage() {
   return (
@@ -22,7 +29,18 @@ export default function SeoPage() {
       <p className="text-zinc-500 mb-12">
         Optymalizacja techniczna, on-page, linki i wszystko co wpływa na widoczność w Google.
       </p>
-      <p className="text-zinc-400 text-sm">Wkrótce pojawi się tu pierwsza treść.</p>
+      <ul className="space-y-8">
+        {entries.map((entry) => (
+          <li key={entry.slug}>
+            <Link href={`/baza-wiedzy/seo/${entry.slug}`} className="group">
+              <h2 className="text-lg font-medium text-zinc-900 group-hover:text-zinc-600 transition-colors mb-1">
+                {entry.title}
+              </h2>
+              <p className="text-zinc-500 text-sm">{entry.description}</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </main>
   );
 }
