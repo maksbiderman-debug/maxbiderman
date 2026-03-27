@@ -108,10 +108,13 @@ function buildRagItems(a: Record<ToggleId, boolean>): Item[] {
       note: a.keywords && a.headings ? undefined : "AI generuje wiele podzapytań — bez fraz i nagłówków strona nie odpowiada na żadne.",
     },
     { label: "Entity clarity", value: a.schema ? "LocalBusiness — AI rozumie typ encji" : "AI dedukuje typ strony samodzielnie", status: a.schema ? "ok" : "info" },
+    { label: "Nagłówek H1", value: a.h1 ? '"Agencja SEO Poznań — pozycjonowanie stron" — AI zna temat strony' : "[brak H1] — AI samodzielnie dedukuje temat", status: a.h1 ? "ok" : "warn", note: a.h1 ? undefined : "Brak H1 utrudnia AI przypisanie strony do konkretnego tematu zapytania." },
+    { label: "Wzmianki zewnętrzne", value: a.external ? "Marketer+, WhitePress, Forbes.pl — AI może zwalidować markę" : "[brak wzmianek] — marka nieznana AI", status: a.external ? "ok" : "error", note: a.external ? "Zewnętrzne cytowania potwierdzają autorytet — AI chętniej cytuje źródła już cytowane przez innych." : "Brak wzmianek zewnętrznych to najsilniejszy sygnał niskiego authority. AI unika cytowania nieznanych marek." },
   ];
 }
 
 function buildScores(a: Record<ToggleId, boolean>) {
+  if (!a.robots) return { authority: 0, relevance: 0, extractability: 0 };
   return {
     authority: Math.min((a.external ? 55 : 5) + (a.eeat ? 20 : 0) + (a.schema ? 12 : 0) + (a.links ? 8 : 0) + (a.sitemap ? 5 : 0), 100),
     relevance: Math.min((a.keywords ? 25 : 0) + (a.h1 ? 25 : 0) + (a.headings ? 20 : 0) + (a.title ? 20 : 0) + (a.meta ? 10 : 0), 100),
@@ -449,6 +452,11 @@ export default function SimulatorClient() {
             {tab === "are" && (
               <div>
                 <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-5">Szansa na cytowanie w AI</p>
+                {!active.robots && (
+                  <div className="bg-red-50 border border-red-100 rounded-lg px-4 py-3 mb-5 text-sm text-red-700">
+                    ❌ <strong>Strona zablokowana (robots: noindex)</strong> — AI nie może jej zindeksować. Wszystkie score = 0%.
+                  </div>
+                )}
                 <div className="space-y-5">
                   <div>
                     <ScoreBar label="Authority — wiarygodność zewnętrzna" value={scores.authority} />
