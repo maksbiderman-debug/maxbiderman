@@ -5,8 +5,7 @@ export default function Home() {
         Maks Biderman
       </h1>
       <p className="text-lg text-zinc-600 mb-8">
-        Customer Success Specialist w agencji digital marketingu. Piszę o SEO,
-        marketingu cyfrowym i tym, czego uczę się na co dzień.
+        Piszę o digital marketingu, organizuję wiedzę i agreguje ciekawe narzędzia. Głównie dla siebie, ale może przyda się też Tobie.
       </p>
       <a
         href="/blog"
