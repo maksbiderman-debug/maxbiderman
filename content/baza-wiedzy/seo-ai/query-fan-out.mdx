@@ -1,0 +1,37 @@
+# Query fan-out — dlaczego AI nie szuka jak Google
+
+`Query fan-out` to mechanizm, w którym AI rozbija jedno pytanie użytkownika na wiele własnych podzapytań i dopiero z nich buduje research. To tłumaczy, czemu nie musisz „zgadywać idealnego promptu". Musisz pokrywać intencje i kryteria decyzji.
+
+> **TL;DR** — AI rozbija jedno pytanie na wiele własnych podzapytań, w tym angielskich. Ważniejsze jest pokrycie całej intencji tematu niż optymalizacja pod konkretne frazy.
+
+## 6-etapowy mechanizm
+
+1. Użytkownik zadaje pytanie (np. „poleć mi firmę remontową w Warszawie").
+2. AI analizuje intencję i generuje od kilku do kilkudziesięciu własnych podzapytań w różnych wersjach językowych — **w tym angielskich, nawet przy polskim pytaniu**.
+3. AI rozpoznaje typ intencji: porównanie, rekomendacja, opinie, lista.
+4. Każde podzapytanie trafia do wyszukiwarki, która zwraca setki URL-i.
+5. AI odwiedza i agreguje treści z tych URL-i.
+6. Odpowiedź jest syntezą wyników fan-out + cytowania wybranych źródeł.
+
+## Wpływ na strategię SEO AI
+
+- **Na SEO:** zamiast 100 wariantów fraz, budujesz pełne pokrycie tematu (topic + intencje).
+- **Na analitykę:** pomaga rozumieć, jakie pytania użytkownik zada „wokół" oferty.
+- **Na SEO + AI:** to jest `Relevance` — wygrywa ten, kto odpowiada na intencję w wielu odnogach.
+
+> **Angielski bias:** Firma bez treści po angielsku traci część cytowań. AI generuje podzapytania w języku angielskim nawet gdy użytkownik pyta po polsku.
+
+## Ile promptów do monitoringu?
+
+| Zakres | Opis |
+|---|---|
+| Minimum | 10 różnych promptów |
+| Optymalnie | 20–30 promptów pokrywających różne intencje |
+| Zły pomysł | 50 wariantów tej samej intencji |
+
+## Typowe błędy
+
+- **Błędna intuicja klienta:** „Skoro użytkownicy wpisują różne rzeczy, to nie można tego kontrolować." — można, przez pokrycie intencji, nie przez optymalizację pod konkretne frazy.
+- Pominięcie angielskiej wersji treści.
+- Za wąska mapa promptów — monitorowanie tylko jednego wariantu pytania = niepełny obraz.
+- Budowanie treści pod „jedno zdanie" zamiast pod oś decyzyjną.

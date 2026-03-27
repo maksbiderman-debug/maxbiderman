@@ -1,0 +1,43 @@
+# RAG — jak AI szuka w sieci i skąd biorą się cytowania
+
+`RAG` (*Retrieval-Augmented Generation*) to mechanizm, w którym model AI nie odpowiada wyłącznie z pamięci, tylko robi research: wyszukuje źródła, czyta fragmenty i dopiero na tej podstawie generuje odpowiedź — czasem z cytowaniami.
+
+> **TL;DR** — AI nie ocenia stron po backlinkach. Analizuje treść. Dlatego obecność na stronie z konkretnymi faktami = szansa na cytowanie.
+
+## 4 etapy RAG
+
+### Etap 1 — Wyszukaj
+
+AI generuje własne podzapytania (`query fan-out`) i przeszukuje internet. Głównie indeks Bing dla tekstu, Google dla feedów produktowych.
+
+### Etap 2 — Zbierz
+
+Model odwiedza setki URL-i i agreguje z nich informacje.
+
+### Etap 3 — Stwórz odpowiedź
+
+Na podstawie zebranych danych AI generuje syntezę — nie listę linków, lecz spójną odpowiedź.
+
+### Etap 4 — Zacytuj źródła
+
+Model wskazuje URL-e, z których korzystał. To są właśnie „źródła AI".
+
+## Kiedy AI wyszukuje, a kiedy nie?
+
+> **Kluczowe rozróżnienie:** AI wyszukuje wyłącznie gdy uzna, że potrzebuje aktualnych danych.
+>
+> - **Zapytania informacyjne** („jak działa X?") — często nie powodują wyszukiwania
+> - **Zapytania konwersyjne** („którą firmę polecasz?") — niemal zawsze powodują wyszukiwanie
+
+## Wpływ na marketing
+
+- **Na SEO:** SEO daje dostępność i treści, ale RAG premiuje konkret, strukturę i aktualność.
+- **Na analitykę:** RAG nie musi generować kliku, więc wpływ częściej widać pośrednio (brand, decyzje).
+- **Na SEO + AI:** RAG to fundament „czemu AI cytuje" i łączy się bezpośrednio z `Extractability`.
+
+## Typowe błędy
+
+- Myślenie, że AI korzysta głównie z danych treningowych i nie można wpłynąć na to co powie — **to nieprawda** przy zapytaniach konwersyjnych.
+- `Wysoka pozycja w Google ≠ cytowanie przez AI` — to dwa różne mechanizmy rankingowe.
+- Strona jest „ładna", ale AI jej nie cytuje, bo nie ma konkretów.
+- Liczenie, że linki bez treści zrobią robotę.

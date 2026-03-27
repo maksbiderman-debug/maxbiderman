@@ -31,4 +31,17 @@ export const searchIndex: SearchItem[] = [
   { title: "Robots.txt", description: "Jak kontrolować co Google może, a czego nie może indeksować.", url: "/baza-wiedzy/seo/robots-txt", category: "SEO" },
   { title: "Open Graph", description: "Jak Twoja strona wygląda gdy ktoś wklei link na LinkedIn czy Facebooku.", url: "/baza-wiedzy/seo/open-graph", category: "SEO" },
   { title: "Schema markup", description: "Dane strukturalne które pomagają Google lepiej rozumieć Twoją treść.", url: "/baza-wiedzy/seo/schema-markup", category: "SEO" },
+  // Baza wiedzy – SEO AI
+  { title: "SEO AI — definicja i mechanizm", description: "Czym jest SEO AI, jak działa RAG i fan-out, i dlaczego cel to już nie tylko kliknięcie.", url: "/baza-wiedzy/seo-ai/seo-ai-definicja", category: "SEO AI" },
+  { title: "AEO Conversational Layer", description: "Warstwa rozmów nad klasycznym lejkiem SEO — Prompts, Mentions, Citations.", url: "/baza-wiedzy/seo-ai/aeo-conversational-layer", category: "SEO AI" },
+  { title: "SEO AI: 3 cele + 2 wymiary", description: "Rekomendacje branżowe, obraz marki i moduły AI — trzy osobne cele z innymi timeline.", url: "/baza-wiedzy/seo-ai/seo-ai-3-cele", category: "SEO AI" },
+  { title: "RAG — jak AI szuka w sieci", description: "Retrieval-Augmented Generation: 4-etapowy mechanizm, który decyduje o cytowaniach.", url: "/baza-wiedzy/seo-ai/rag", category: "SEO AI" },
+  { title: "Playbook SEO AI", description: "Mapa całego procesu: diagnoza → hipoteza → wdrożenie → weryfikacja.", url: "/baza-wiedzy/seo-ai/playbook-seo-ai", category: "SEO AI" },
+  { title: "Query fan-out", description: "Dlaczego AI nie szuka jak Google i czemu słowa w prompcie to nie wszystko.", url: "/baza-wiedzy/seo-ai/query-fan-out", category: "SEO AI" },
+  { title: "Framework: Authority / Relevance / Extractability", description: "3 siły, które decydują o cytowaniach w AI — i jak je diagnozować.", url: "/baza-wiedzy/seo-ai/framework-authority-relevance-extractability", category: "SEO AI" },
+  { title: "Mindset SEO AI", description: "Strategia iteracyjna zamiast checklisty: hipoteza → wdrożenie → weryfikacja → korekta.", url: "/baza-wiedzy/seo-ai/mindset-seo-ai", category: "SEO AI" },
+  { title: "AIO vs GEO", description: "Dwa różne kanały widoczności AI — Google vs ChatGPT/Perplexity.", url: "/baza-wiedzy/seo-ai/aio-vs-geo", category: "SEO AI" },
+  { title: "SEO vs AEO vs GEO", description: "3 warstwy widoczności: rankingi, bycie odpowiedzią i cytowania w modelach AI.", url: "/baza-wiedzy/seo-ai/seo-vs-aeo-vs-geo", category: "SEO AI" },
+  { title: "AI Visibility Audit", description: "Jak testować widoczność marki w AI — metodyka, narzędzia i interpretacja wyników.", url: "/baza-wiedzy/seo-ai/ai-visibility-audit", category: "SEO AI" },
+  { title: "Framework 12 intencji", description: "Mapa promptów do monitoringu SEO AI — 12 typów intencji zakupowych.", url: "/baza-wiedzy/seo-ai/framework-12-intencji", category: "SEO AI" },
 ];

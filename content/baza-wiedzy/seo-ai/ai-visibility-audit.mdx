@@ -1,0 +1,48 @@
+# AI Visibility Audit — jak testować widoczność marki w AI
+
+`AI visibility audit` to systematyczne sprawdzenie, czy i jak marka pojawia się w odpowiedziach modeli AI (ChatGPT, Perplexity, Gemini). To punkt wyjścia do diagnozy, co poprawić w frameworku Authority / Relevance / Extractability.
+
+> **TL;DR** — Bez audytu nie wiesz co naprawiać. Audyt ujawnia, na jakim poziomie jesteś: brak / mention (wzmianka) / citation (cytowanie ze źródłem).
+
+## Jak przeprowadzić audyt
+
+1. **Przygotuj zestaw 10–20 promptów** w trzech kategoriach:
+   - Branżowe — np. „najlepsza agencja SEO we Wrocławiu"
+   - Porównawcze — „SEO vs Google Ads — co wybrać dla sklepu"
+   - Decyzyjne — „komu zlecić pozycjonowanie strony"
+
+2. **Testuj w min. 3 modelach:**
+   - `Perplexity` — RAG, aktualne dane (najważniejszy)
+   - `ChatGPT` z wyszukiwaniem
+   - `Gemini`
+
+3. **Notuj wyniki:**
+   - Czy marka się pojawia (`mention` — wzmianka)?
+   - Czy jest podana jako źródło (`citation` — cytowanie)?
+   - Z jakim sentymentem (pozytywny / neutralny / negatywny)?
+
+4. **Porównaj z konkurencją** — te same prompty, inne marki → kontekst do oceny wyników.
+
+5. **Powtarzaj co 4–6 tygodni** — wyniki zmieniają się po aktualizacjach modeli.
+
+## Poziomy widoczności
+
+| Poziom | Co oznacza | Co naprawiać |
+|---|---|---|
+| Brak wzmianki | Marka niewidoczna | `Authority` — brakuje zewnętrznych potwierdzeń |
+| `Mention` | Wzmianka bez źródła | `Extractability` — brakuje cytowalnych fragmentów |
+| `Citation` | Cytowanie ze źródłem | Optymalizacja i rozszerzanie |
+
+## Wpływ na marketing
+
+- **Na SEO:** audyt ujawnia luki w `Relevance` (których tematów brakuje na stronie).
+- **Na analitykę:** daje kontekst do interpretacji wzrostów brand search i `dark traffic`.
+- **Na SEO + AI:** to punkt wyjścia do diagnozy frameworku A/R/E.
+
+## Typowe błędy
+
+> **Pułapka:** Testowanie tylko w jednym modelu — wyniki się różnią. Perplexity ≠ ChatGPT ≠ Gemini.
+
+- Zbyt ogólne prompty — „co to SEO" nie pokaże widoczności Twojej marki.
+- Brak powtórzalności — jednorazowy test nic nie mówi o trendzie.
+- Brak porównania z konkurencją — bez benchmarku nie wiesz, czy wynik jest dobry.
