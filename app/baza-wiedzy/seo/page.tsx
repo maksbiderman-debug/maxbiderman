@@ -17,6 +17,11 @@ const entries = [
     title: "Robots.txt",
     description: "Jak kontrolować co Google może, a czego nie może indeksować.",
   },
+  {
+    slug: "open-graph",
+    title: "Open Graph",
+    description: "Jak Twoja strona wygląda gdy ktoś wklei link na LinkedIn czy Facebooku.",
+  },
 ];
 
 export default function SeoPage() {
