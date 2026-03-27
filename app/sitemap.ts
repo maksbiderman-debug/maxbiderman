@@ -58,6 +58,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     {
+      url: "https://maxbiderman.pl/narzedzia/symulator-seo",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: "https://maxbiderman.pl/baza-wiedzy/performance",
       lastModified: new Date(),
       changeFrequency: "weekly",
