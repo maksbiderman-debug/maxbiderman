@@ -193,6 +193,7 @@ function PreviewBlock({
   label: string;
   children: React.ReactNode;
 }) {
+  const docUrl = ALL_TOGGLES.find((t) => t.id === id)?.docUrl ?? null;
   return (
     <div
       onClick={onToggle}
@@ -205,6 +206,14 @@ function PreviewBlock({
       <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
         <span>← {label}</span>
         {!active && <span className="text-red-400 font-medium">✕ wyłączony</span>}
+        {docUrl && (
+          <Link
+            href={docUrl}
+            onClick={(e) => e.stopPropagation()}
+            className="ml-1 text-zinc-300 hover:text-purple-600 transition-colors"
+            title="Baza wiedzy →"
+          >↗</Link>
+        )}
       </p>
     </div>
   );
@@ -213,7 +222,7 @@ function PreviewBlock({
 export default function SimulatorClient() {
   const [active, setActive] = useState<Record<ToggleId, boolean>>(INITIAL);
   const [tab, setTab] = useState<TabId>("googlebot");
-  const [copied, setCopied] = useState(false);
+  const [activePreset, setActivePreset] = useState<string | null>(null);
 
   // Read URL state on mount
   useEffect(() => {
@@ -234,15 +243,17 @@ export default function SimulatorClient() {
     window.history.replaceState({}, "", url.toString());
   }, [active]);
 
-  const toggle = (id: ToggleId) => setActive((p) => ({ ...p, [id]: !p[id] }));
-  const resetAll = () => setActive(INITIAL);
-  const disableAll = () =>
-    setActive(Object.fromEntries(Object.keys(INITIAL).map((k) => [k, false])) as Record<ToggleId, boolean>);
-  const applyPreset = (state: Record<ToggleId, boolean>) => setActive(state);
-  const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const toggle = (id: ToggleId) => { setActivePreset(null); setActive((p) => ({ ...p, [id]: !p[id] })); };
+  const resetAll = () => { setActive(INITIAL); setActivePreset(null); };
+  const disableAll = () => { setActive(Object.fromEntries(Object.keys(INITIAL).map((k) => [k, false])) as Record<ToggleId, boolean>); setActivePreset(null); };
+  const applyPreset = (preset: typeof PRESETS[0]) => {
+    if (activePreset === preset.label) {
+      setActivePreset(null);
+      setActive(INITIAL);
+    } else {
+      setActivePreset(preset.label);
+      setActive(preset.state);
+    }
   };
 
   const scores = buildScores(active);
@@ -276,8 +287,12 @@ export default function SimulatorClient() {
         {PRESETS.map((p) => (
           <button
             key={p.label}
-            onClick={() => applyPreset(p.state)}
-            className="text-xs px-3 py-1.5 rounded-full border border-zinc-200 text-zinc-600 hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50 transition-all cursor-pointer"
+            onClick={() => applyPreset(p)}
+            className={`text-xs px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
+              activePreset === p.label
+                ? "border-purple-400 bg-purple-100 text-purple-800 font-medium"
+                : "border-zinc-200 text-zinc-600 hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50"
+            }`}
           >
             {p.label}
           </button>
@@ -300,10 +315,6 @@ export default function SimulatorClient() {
           <p className="text-xs text-zinc-400 italic">Kliknij element na podglądzie żeby go włączyć lub wyłączyć.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={copyLink} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">
-            {copied ? "✅ Skopiowano!" : "🔗 Kopiuj link"}
-          </button>
-          <span className="text-zinc-300">·</span>
           <button onClick={resetAll} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">↺ Włącz wszystko</button>
           <span className="text-zinc-300">·</span>
           <button onClick={disableAll} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">✕ Wyłącz wszystko</button>
@@ -315,7 +326,6 @@ export default function SimulatorClient() {
 
         {/* ── Left: Interactive mock page ── */}
         <div>
-          <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">Podgląd strony</p>
           <div className="border border-zinc-200 rounded-xl overflow-hidden">
 
             {/* Browser chrome */}
@@ -360,6 +370,7 @@ export default function SimulatorClient() {
                 <span className="text-amber-300">&quot;{active.robots ? "index, follow" : "noindex"}&quot;</span>
                 <span className="text-zinc-500"> /&gt;</span>
                 {!active.robots && <span className="text-red-400 ml-2">← strona niewidoczna!</span>}
+                <Link href="/baza-wiedzy/seo/robots-txt" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors" title="Baza wiedzy: robots.txt">↗</Link>
               </div>
 
               <div
@@ -412,6 +423,7 @@ export default function SimulatorClient() {
                 <span className="text-zinc-500"> content=</span>
                 <span className="text-amber-300">&quot;Agencja SEO Poznań | Widoczni&quot;</span>
                 <span className="text-zinc-500"> /&gt;</span>
+                <Link href="/baza-wiedzy/seo/open-graph" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors" title="Baza wiedzy: Open Graph">↗</Link>
               </div>
 
               <div
@@ -426,6 +438,7 @@ export default function SimulatorClient() {
                 <span className="text-zinc-500">&gt; </span>
                 <span className="text-blue-400">{`{ "@type": "LocalBusiness" }`}</span>
                 <span className="text-zinc-500"> &lt;/script&gt;</span>
+                <Link href="/baza-wiedzy/seo/schema-markup" onClick={(e) => e.stopPropagation()} className="ml-2 text-zinc-600 hover:text-purple-400 transition-colors" title="Baza wiedzy: Schema markup">↗</Link>
               </div>
 
             </div>
@@ -657,17 +670,6 @@ export default function SimulatorClient() {
             <span>✅ OK</span><span>⚠️ Ostrzeżenie</span><span>❌ Problem</span><span>ℹ️ Info</span>
           </div>
 
-          {/* Doc links */}
-          <div className="mt-4">
-            <p className="text-xs text-zinc-400 mb-2">Dowiedz się więcej w bazie wiedzy:</p>
-            <div className="flex flex-wrap gap-x-4 gap-y-1">
-              {ALL_TOGGLES.filter((t) => t.docUrl).map((t) => (
-                <Link key={t.id} href={t.docUrl!} className="text-xs text-zinc-500 underline underline-offset-2 hover:text-zinc-900 transition-colors">
-                  {t.label}
-                </Link>
-              ))}
-            </div>
-          </div>
         </div>
 
       </div>
