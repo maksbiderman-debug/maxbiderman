@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 type ToggleId =
@@ -52,6 +52,25 @@ const INITIAL: Record<ToggleId, boolean> = {
   schema: true, alt: true, canonical: true, facts: true, links: true,
   external: true, og: true, sitemap: true, vitals: true, eeat: true, keywords: true,
 };
+
+const PRESETS: { label: string; state: Record<ToggleId, boolean> }[] = [
+  {
+    label: "Nowa strona bez SEO",
+    state: { robots: true, title: false, meta: false, h1: false, headings: false, schema: false, alt: false, canonical: false, facts: false, links: false, external: false, og: false, sitemap: false, vitals: false, eeat: false, keywords: false },
+  },
+  {
+    label: "Dobra technicznie, słaba dla AI",
+    state: { robots: true, title: true, meta: true, h1: true, headings: true, schema: true, alt: true, canonical: true, vitals: true, og: true, sitemap: true, links: true, keywords: true, facts: false, eeat: false, external: false },
+  },
+  {
+    label: "E-commerce bez schema",
+    state: { robots: true, title: true, meta: true, h1: true, headings: true, schema: false, alt: true, canonical: true, facts: true, links: true, external: true, og: true, sitemap: true, vitals: true, eeat: true, keywords: true },
+  },
+  {
+    label: "Po Helpful Content Update",
+    state: { robots: true, title: true, meta: true, h1: true, headings: true, schema: true, alt: true, canonical: true, links: true, external: true, og: true, sitemap: true, vitals: true, keywords: true, facts: false, eeat: false },
+  },
+];
 
 type Item = {
   label: string;
@@ -194,14 +213,44 @@ function PreviewBlock({
 export default function SimulatorClient() {
   const [active, setActive] = useState<Record<ToggleId, boolean>>(INITIAL);
   const [tab, setTab] = useState<TabId>("googlebot");
+  const [copied, setCopied] = useState(false);
+
+  // Read URL state on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("t");
+    if (t && t.length === ALL_TOGGLES.length) {
+      const next = { ...INITIAL };
+      ALL_TOGGLES.forEach((tog, i) => { next[tog.id] = t[i] === "1"; });
+      setActive(next);
+    }
+  }, []);
+
+  // Sync state to URL
+  useEffect(() => {
+    const t = ALL_TOGGLES.map((tog) => (active[tog.id] ? "1" : "0")).join("");
+    const url = new URL(window.location.href);
+    url.searchParams.set("t", t);
+    window.history.replaceState({}, "", url.toString());
+  }, [active]);
 
   const toggle = (id: ToggleId) => setActive((p) => ({ ...p, [id]: !p[id] }));
   const resetAll = () => setActive(INITIAL);
   const disableAll = () =>
     setActive(Object.fromEntries(Object.keys(INITIAL).map((k) => [k, false])) as Record<ToggleId, boolean>);
+  const applyPreset = (state: Record<ToggleId, boolean>) => setActive(state);
+  const copyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const scores = buildScores(active);
   const avg = Math.round((scores.authority + scores.relevance + scores.extractability) / 3);
+
+  const gbItems = buildGbItems(active);
+  const errorCount = gbItems.filter((i) => i.status === "error").length;
+  const warnCount = gbItems.filter((i) => i.status === "warn").length;
 
   const TABS: { id: TabId; label: string }[] = [
     { id: "googlebot", label: "🤖 Googlebot" },
@@ -221,10 +270,40 @@ export default function SimulatorClient() {
         </p>
       </div>
 
+      {/* Presety */}
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider mr-1">Scenariusz:</span>
+        {PRESETS.map((p) => (
+          <button
+            key={p.label}
+            onClick={() => applyPreset(p.state)}
+            className="text-xs px-3 py-1.5 rounded-full border border-zinc-200 text-zinc-600 hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50 transition-all cursor-pointer"
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
+
       {/* Controls bar */}
       <div className="flex items-center justify-between mb-6">
-        <p className="text-sm text-zinc-400 italic">Kliknij element na podglądzie strony żeby go włączyć lub wyłączyć.</p>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
+          {(errorCount > 0 || warnCount > 0) ? (
+            <span className="text-xs font-medium">
+              {errorCount > 0 && <span className="text-red-600">❌ {errorCount} {errorCount === 1 ? "problem" : "problemy"}</span>}
+              {errorCount > 0 && warnCount > 0 && <span className="text-zinc-300 mx-1.5">·</span>}
+              {warnCount > 0 && <span className="text-amber-600">⚠️ {warnCount} {warnCount === 1 ? "ostrzeżenie" : "ostrzeżenia"}</span>}
+            </span>
+          ) : (
+            <span className="text-xs text-emerald-600 font-medium">✅ Brak problemów</span>
+          )}
+          <span className="text-zinc-200">|</span>
+          <p className="text-xs text-zinc-400 italic">Kliknij element na podglądzie żeby go włączyć lub wyłączyć.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={copyLink} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">
+            {copied ? "✅ Skopiowano!" : "🔗 Kopiuj link"}
+          </button>
+          <span className="text-zinc-300">·</span>
           <button onClick={resetAll} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">↺ Włącz wszystko</button>
           <span className="text-zinc-300">·</span>
           <button onClick={disableAll} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">✕ Wyłącz wszystko</button>
