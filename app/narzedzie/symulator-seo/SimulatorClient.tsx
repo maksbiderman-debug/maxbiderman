@@ -231,13 +231,150 @@ function buildRagItems(a: Record<ToggleId, boolean>, c: PageContent): Item[] {
   ];
 }
 
-function buildScores(a: Record<ToggleId, boolean>) {
+type ScoreWeights = {
+  authority: { external: number; eeat: number; schema: number; links: number; sitemap: number };
+  relevance: { keywords: number; h1: number; headings: number; title: number; meta: number };
+  extractability: { facts: number; headings: number; h1: number; schema: number };
+};
+
+const SCORE_WEIGHTS: Record<PageType, ScoreWeights> = {
+  agencja: {
+    authority:     { external: 50, eeat: 25, schema: 15, links: 7,  sitemap: 3 },
+    relevance:     { keywords: 25, h1: 25,   headings: 20, title: 20, meta: 10 },
+    extractability:{ facts: 40,    headings: 25, h1: 15,  schema: 20 },
+  },
+  artykul: {
+    authority:     { external: 30, eeat: 45, schema: 10, links: 10, sitemap: 5 },
+    relevance:     { keywords: 25, h1: 30,   headings: 25, title: 15, meta: 5 },
+    extractability:{ facts: 55,    headings: 25, h1: 15,  schema: 5 },
+  },
+  produkt: {
+    authority:     { external: 35, eeat: 30, schema: 20, links: 10, sitemap: 5 },
+    relevance:     { keywords: 30, h1: 20,   headings: 5,  title: 30, meta: 15 },
+    extractability:{ facts: 30,    headings: 20, h1: 15,  schema: 35 },
+  },
+  glowna: {
+    authority:     { external: 40, eeat: 20, schema: 10, links: 25, sitemap: 5 },
+    relevance:     { keywords: 25, h1: 20,   headings: 5,  title: 35, meta: 15 },
+    extractability:{ facts: 40,    headings: 20, h1: 20,  schema: 20 },
+  },
+};
+
+function buildScores(a: Record<ToggleId, boolean>, pageType: PageType) {
   if (!a.robots) return { authority: 0, relevance: 0, extractability: 0 };
+  const w = SCORE_WEIGHTS[pageType];
   return {
-    authority: Math.min((a.external ? 55 : 5) + (a.eeat ? 20 : 0) + (a.schema ? 12 : 0) + (a.links ? 8 : 0) + (a.sitemap ? 5 : 0), 100),
-    relevance: Math.min((a.keywords ? 25 : 0) + (a.h1 ? 25 : 0) + (a.headings ? 20 : 0) + (a.title ? 20 : 0) + (a.meta ? 10 : 0), 100),
-    extractability: Math.min((a.facts ? 50 : 0) + (a.headings ? 25 : 0) + (a.h1 ? 15 : 0) + (a.schema ? 10 : 0), 100),
+    authority: Math.min(
+      (a.external ? w.authority.external : 5) +
+      (a.eeat    ? w.authority.eeat    : 0) +
+      (a.schema  ? w.authority.schema  : 0) +
+      (a.links   ? w.authority.links   : 0) +
+      (a.sitemap ? w.authority.sitemap : 0),
+      100
+    ),
+    relevance: Math.min(
+      (a.keywords ? w.relevance.keywords : 0) +
+      (a.h1       ? w.relevance.h1       : 0) +
+      (a.headings ? w.relevance.headings : 0) +
+      (a.title    ? w.relevance.title    : 0) +
+      (a.meta     ? w.relevance.meta     : 0),
+      100
+    ),
+    extractability: Math.min(
+      (a.facts    ? w.extractability.facts    : 0) +
+      (a.headings ? w.extractability.headings : 0) +
+      (a.h1       ? w.extractability.h1       : 0) +
+      (a.schema   ? w.extractability.schema   : 0),
+      100
+    ),
   };
+}
+
+type TopFix = { id: ToggleId; label: string; impact: string };
+
+const TOP_FIX_PRIORITY: Record<PageType, { id: ToggleId; impact: string }[]> = {
+  agencja: [
+    { id: "robots",   impact: "Strona jest niewidoczna — Google i AI nic nie indeksuje." },
+    { id: "external", impact: "Brak wzmianek branżowych to największy hamulec authority dla agencji." },
+    { id: "schema",   impact: "Agencja bez LocalBusiness schema traci rich results i widoczność w Google Maps." },
+    { id: "eeat",     impact: "Klienci i Google muszą widzieć kto stoi za agencją — brak E-E-A-T to brak zaufania." },
+    { id: "title",    impact: "Brak tytułu = słabszy CTR. Google wygeneruje własny, zwykle gorszy." },
+    { id: "h1",       impact: "Google nie wie czego dotyczy strona bez wyraźnego H1." },
+    { id: "keywords", impact: "Brak fraz kluczowych — strona nie ma szansy rankować na docelowe zapytania." },
+    { id: "facts",    impact: "Konkretne liczby (klienci, wyniki) to klucz do cytowalności i konwersji." },
+    { id: "canonical",impact: "Bez canonical ryzykujesz duplikację między wersjami www/https." },
+    { id: "meta",     impact: "Brak meta description obniża CTR — Google wyciągnie losowy fragment." },
+    { id: "headings", impact: "Struktura H2/H3 pomaga Google i AI zrozumieć podtematy strony." },
+    { id: "links",    impact: "Linki wewnętrzne rozdzielają PageRank i pomagają crawlerowi odkryć inne strony." },
+    { id: "vitals",   impact: "Wolna strona traci pozycje — Core Web Vitals to sygnał rankingowy." },
+    { id: "og",       impact: "Bez Open Graph linki na LinkedIn/Facebooku wyglądają nieprofesjonalnie." },
+    { id: "alt",      impact: "Brak alt attributes ogranicza indeksowanie obrazów." },
+    { id: "sitemap",  impact: "Sitemap przyspiesza odkrycie nowych podstron przez Googlebota." },
+  ],
+  artykul: [
+    { id: "robots",   impact: "Strona jest niewidoczna — Google i AI nic nie indeksuje." },
+    { id: "eeat",     impact: "Artykuł bez autora i kredencjałów jest anonimowy. Google i AI preferują źródła eksperckie." },
+    { id: "facts",    impact: "Artykuł bez danych i liczb jest przeźroczysty dla AI — nikt nie cytuje ogólników." },
+    { id: "h1",       impact: "Brak H1 oznacza że AI samodzielnie dedukuje temat — często błędnie." },
+    { id: "headings", impact: "Struktura H2/H3 to mapa artykułu — AI wyciąga sekcje, Google rankuje podtematy." },
+    { id: "keywords", impact: "Bez fraz kluczowych artykuł nie odpowiada na konkretne zapytania." },
+    { id: "external", impact: "Cytowania w branżowych serwisach potwierdzają autorytet — AI unika nieznanych źródeł." },
+    { id: "title",    impact: "Brak tytułu = słabszy CTR. Google wygeneruje własny, zwykle gorszy." },
+    { id: "meta",     impact: "Meta description przyciąga kliknięcia w SERP." },
+    { id: "canonical",impact: "Bez canonical ryzykujesz duplikację jeśli artykuł jest syndykowany." },
+    { id: "links",    impact: "Linki wewnętrzne wiążą artykuł z resztą bazy wiedzy — PageRank i kontekst." },
+    { id: "vitals",   impact: "Wolna strona zniechęca czytelników i szkodzi rankingom." },
+    { id: "schema",   impact: "Article schema umożliwia rich results (data, autor) w SERP." },
+    { id: "og",       impact: "Bez Open Graph udostępniony artykuł wygląda nieprofesjonalnie w social media." },
+    { id: "alt",      impact: "Infografiki bez alt są nieindeksowalne i niedostępne." },
+    { id: "sitemap",  impact: "Sitemap przyspiesza indeksowanie nowych wpisów." },
+  ],
+  produkt: [
+    { id: "robots",   impact: "Strona jest niewidoczna — Google i AI nic nie indeksuje." },
+    { id: "schema",   impact: "Produkt bez danych strukturalnych traci rich results — ceny i oceny znikają z Google." },
+    { id: "title",    impact: "Tytuł z nazwą produktu to pierwszy czynnik kliknięcia — musi być precyzyjny." },
+    { id: "keywords", impact: "Bez fraz zakupowych produkt nie rankuje na zapytania e-commerce." },
+    { id: "alt",      impact: "Sklep bez opisów obrazów traci ruch z Google Images i dostępność." },
+    { id: "eeat",     impact: "Autoryzacja sprzedawcy i gwarancja to sygnały E-E-A-T ważne w e-commerce." },
+    { id: "facts",    impact: "Cena, oceny, dostępność — bez konkretnych danych karta produktu nie konwertuje." },
+    { id: "h1",       impact: "H1 musi zawierać pełną nazwę produktu — sygnał rankingowy i klucz dla AI." },
+    { id: "canonical",impact: "E-commerce generuje duplikaty URL (filtry, sortowanie) — canonical jest krytyczny." },
+    { id: "external", impact: "Polecenia zewnętrzne (Ceneo, Allegro) to sygnał wiarygodności produktu." },
+    { id: "meta",     impact: "Meta description z ceną i dostawą poprawia CTR na frazach zakupowych." },
+    { id: "headings", impact: "Specyfikacja w H2/H3 pomaga Google zrozumieć cechy produktu." },
+    { id: "links",    impact: "Linki do podobnych produktów i koszyka poprawiają nawigację i konwersję." },
+    { id: "vitals",   impact: "Każda sekunda ładowania to strata konwersji — szybkość jest krytyczna." },
+    { id: "og",       impact: "Udostępniony produkt bez og:image nie konwertuje w social media." },
+    { id: "sitemap",  impact: "Sitemap przyspiesza indeksowanie nowych produktów i wariantów." },
+  ],
+  glowna: [
+    { id: "robots",   impact: "Strona jest niewidoczna — Google i AI nic nie indeksuje." },
+    { id: "title",    impact: "Tytuł strony głównej to wizytówka marki w SERP — musi identyfikować firmę i ofertę." },
+    { id: "links",    impact: "Strona główna jest hubem linkowym — bez linków wewnętrznych PageRank nie płynie do podstron." },
+    { id: "schema",   impact: "Organization schema buduje grafy wiedzy Google — firma bez niej jest gorzej rozumiana przez AI." },
+    { id: "og",       impact: "Strona główna jest najczęściej udostępniana — Open Graph to wizytówka marki w social media." },
+    { id: "eeat",     impact: "Strona główna bez info o firmie ma słabe E-E-A-T — kto za tym stoi?" },
+    { id: "keywords", impact: "Bez fraz kluczowych strona nie rankuje na branded i ogólne zapytania." },
+    { id: "external", impact: "Wzmianki zewnętrzne budują autorytet domeny — AI waliduje markę przez cytowania." },
+    { id: "h1",       impact: "H1 na stronie głównej definiuje główny temat domeny dla Google i AI." },
+    { id: "canonical",impact: "Bez canonical www i non-www generują duplikaty strony głównej." },
+    { id: "meta",     impact: "Meta description to opis firmy w SERP — pierwsza impressja dla potencjalnych klientów." },
+    { id: "headings", impact: "H2/H3 na stronie głównej pomagają Google zrozumieć sekcje i ofertę." },
+    { id: "vitals",   impact: "Wolna strona główna niszczy pierwsze wrażenie i rankingi." },
+    { id: "facts",    impact: "Liczby i osiągnięcia na stronie głównej zwiększają wiarygodność i cytowalność." },
+    { id: "alt",      impact: "Obrazy bez alt są nieindeksowalne i niedostępne." },
+    { id: "sitemap",  impact: "Sitemap przyspiesza indeksowanie całej struktury strony." },
+  ],
+};
+
+function buildTopFix(a: Record<ToggleId, boolean>, pageType: PageType): TopFix | null {
+  for (const { id, impact } of TOP_FIX_PRIORITY[pageType]) {
+    if (!a[id]) {
+      const def = ALL_TOGGLES.find((t) => t.id === id)!;
+      return { id, label: def.label, impact };
+    }
+  }
+  return null;
 }
 
 function icon(s: Item["status"]) {
@@ -357,7 +494,8 @@ export default function SimulatorClient() {
   };
 
   const content = PAGE_CONTENT[pageType];
-  const scores = buildScores(active);
+  const scores = buildScores(active, pageType);
+  const topFix = buildTopFix(active, pageType);
   const avg = Math.round((scores.authority + scores.relevance + scores.extractability) / 3);
   const gbItems = buildGbItems(active, content);
   const errorCount = gbItems.filter((i) => i.status === "error").length;
@@ -576,6 +714,14 @@ export default function SimulatorClient() {
 
         {/* ── Right: Analysis ── */}
         <div>
+          {topFix && (
+            <div className="bg-amber-50 border border-amber-100 rounded-lg px-4 py-3 mb-4">
+              <p className="text-xs font-medium text-amber-800 mb-0.5">
+                💡 Co naprawić najpierw: <span className="font-semibold">{topFix.label}</span>
+              </p>
+              <p className="text-xs text-amber-700">{topFix.impact}</p>
+            </div>
+          )}
           <div className="flex gap-1 bg-zinc-100 rounded-lg p-1 mb-4">
             {TABS.map((t) => (
               <button key={t.id} onClick={() => setTab(t.id)}
