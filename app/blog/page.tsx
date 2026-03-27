@@ -20,7 +20,7 @@ const posts = [
 export default function BlogPage() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-24">
-      <h1 className="text-3xl font-semibold tracking-tight text-zinc-700 mb-2">
+      <h1 className="text-3xl font-semibold tracking-tight text-purple-800 mb-2">
         Blog
       </h1>
       <p className="text-zinc-500 mb-12">
@@ -32,7 +32,7 @@ export default function BlogPage() {
           <li key={post.slug}>
             <Link href={`/blog/${post.slug}`} className="group">
               <time className="text-sm text-zinc-400">{post.date}</time>
-              <h2 className="text-lg font-medium text-zinc-900 group-hover:text-zinc-600 transition-colors mt-1 mb-1">
+              <h2 className="text-lg font-medium text-purple-800 group-hover:text-purple-600 transition-colors mt-1 mb-1">
                 {post.title}
               </h2>
               <p className="text-zinc-500 text-sm">{post.description}</p>

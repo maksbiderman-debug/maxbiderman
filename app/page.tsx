@@ -1,7 +1,7 @@
 export default function Home() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-24">
-      <h1 className="text-3xl font-semibold tracking-tight text-zinc-700 mb-4">
+      <h1 className="text-3xl font-semibold tracking-tight text-purple-800 mb-4">
         Maks Biderman
       </h1>
       <p className="text-lg text-zinc-600 mb-8">

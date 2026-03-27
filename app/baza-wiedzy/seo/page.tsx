@@ -36,7 +36,7 @@ export default function SeoPage() {
       >
         ← Baza wiedzy
       </Link>
-      <h1 className="text-3xl font-semibold tracking-tight text-zinc-700 mb-2">
+      <h1 className="text-3xl font-semibold tracking-tight text-purple-800 mb-2">
         SEO
       </h1>
       <p className="text-zinc-500 mb-12">
@@ -46,7 +46,7 @@ export default function SeoPage() {
         {entries.map((entry) => (
           <li key={entry.slug}>
             <Link href={`/baza-wiedzy/seo/${entry.slug}`} className="group">
-              <h2 className="text-lg font-medium text-zinc-900 group-hover:text-zinc-600 transition-colors mb-1">
+              <h2 className="text-lg font-medium text-purple-800 group-hover:text-purple-600 transition-colors mb-1">
                 {entry.title}
               </h2>
               <p className="text-zinc-500 text-sm">{entry.description}</p>
