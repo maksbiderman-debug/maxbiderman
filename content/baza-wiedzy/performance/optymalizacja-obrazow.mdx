@@ -1,0 +1,74 @@
+# Optymalizacja obrazów
+
+Obrazy to najczęstszy powód wolnych stron. Odpowiadają zazwyczaj za 50–80% wagi strony i są głównym winowajcą złego LCP. Dobra optymalizacja obrazów to często najtańszy sposób na poprawę wydajności — bez zmian w kodzie ani architekturze.
+
+## Formaty obrazów
+
+**JPEG** — sprawdza się dla zdjęć i realistycznych grafik. Stratna kompresja daje małe pliki kosztem pewnej utraty jakości.
+
+**PNG** — dla grafik z przezroczystością lub ostrymi krawędziami (logotypy, ikony). Bezstratny, ale cięższy niż JPEG dla zdjęć.
+
+**WebP** — nowoczesny format Google. Daje 25–35% mniejsze pliki niż JPEG przy porównywalnej jakości. Obsługiwany przez wszystkie nowoczesne przeglądarki.
+
+**AVIF** — jeszcze nowszy, jeszcze mniejszy (40–50% vs JPEG). Wolniejsze kodowanie, ale coraz lepsze wsparcie przeglądarek.
+
+**SVG** — dla ikon i prostych grafik wektorowych. Skalowalny, lekki, nie pikseluje w żadnej rozdzielczości.
+
+> Strategia: WebP jako domyślny format dla zdjęć, SVG dla ikon i logo, PNG tylko gdy potrzebujesz przezroczystości i nie możesz użyć WebP.
+
+## Rozmiar obrazu vs rozmiar pliku
+
+Dwie różne rzeczy, które łatwo mylić:
+
+- **Rozmiar obrazu** — rozdzielczość w pikselach (np. 3000×2000 px)
+- **Rozmiar pliku** — waga w kilobajtach/megabajtach
+
+Obraz 3000px szeroki wyświetlany w 800px kolumnie to marnowanie zasobów. Przeglądarka pobiera cały plik, a wyświetla tylko fragment informacji.
+
+**Zasada:** serwuj obraz w rozmiarze zbliżonym do tego w jakim jest wyświetlany. Na mobile kolumna treści to zwykle 375–430 px — nie potrzebujesz obrazu 2000 px.
+
+## Srcset i responsive images
+
+Atrybut `srcset` pozwala serwować różne rozmiary obrazu dla różnych urządzeń:
+
+```html
+<img
+  src="hero-800.webp"
+  srcset="hero-400.webp 400w, hero-800.webp 800w, hero-1200.webp 1200w"
+  sizes="(max-width: 600px) 100vw, 800px"
+  alt="Opis obrazu"
+/>
+```
+
+Przeglądarka sama wybierze odpowiedni rozmiar na podstawie szerokości ekranu i gęstości pikseli. Next.js robi to automatycznie przez komponent `<Image />`.
+
+## Kompresja
+
+Nawet poprawnie zwymiarowany obraz może być za ciężki bez kompresji.
+
+- **Stratna (lossy)** — zmniejsza wagę przez usunięcie danych niewidocznych dla oka. Dobra dla zdjęć. Narzędzia: Squoosh, TinyPNG, sharp.
+- **Bezstratna (lossless)** — usuwa metadane i optymalizuje strukturę pliku bez utraty jakości. Dobra dla PNG.
+
+Typowy cel: zdjęcie w tle lub hero image poniżej 200 KB. Miniaturki i ikony poniżej 30 KB.
+
+## Metadane i EXIF
+
+Zdjęcia z aparatu czy telefonu zawierają ukryte metadane EXIF: lokalizację GPS, model aparatu, czas nagrania. Przy eksporcie do internetu warto je usunąć — zmniejsza wagę pliku i chroni prywatność.
+
+## Priorytet obrazu LCP
+
+Obraz LCP (Largest Contentful Paint) powinien ładować się jak najszybciej. Dodaj atrybut `fetchpriority="high"` żeby przeglądarka wiedziała, że to priorytet:
+
+```html
+<img src="hero.webp" fetchpriority="high" alt="..." />
+```
+
+Nie stosuj `loading="lazy"` na obrazie LCP — to spowolni jego ładowanie zamiast przyspieszyć.
+
+## Częste błędy
+
+- Wgrywanie oryginalnych zdjęć z aparatu (4–8 MB) bez konwersji
+- Użycie PNG dla zdjęć zamiast WebP/JPEG
+- Brak atrybutu `width` i `height` — powoduje CLS gdy przeglądarka nie zna wymiarów przed załadowaniem
+- `loading="lazy"` na obrazach widocznych od razu (above the fold)
+- Brak atrybutu `alt` — problem SEO i dostępności jednocześnie

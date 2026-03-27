@@ -1,0 +1,71 @@
+# Lighthouse
+
+Lighthouse to automatyczny audytor stron wbudowany w Chrome. Mierzy wydajność, dostępność, SEO i dobre praktyki — wszystko w jednym raporcie, bez potrzeby logowania czy rejestracji.
+
+## Jak uruchomić Lighthouse
+
+**W Chrome DevTools:**
+1. Otwórz stronę którą chcesz audytować
+2. Naciśnij `F12` (lub kliknij prawym → "Zbadaj")
+3. Przejdź do zakładki "Lighthouse"
+4. Wybierz kategorie i urządzenie
+5. Kliknij "Analizuj wczytanie strony"
+
+**Alternatywy:**
+- PageSpeed Insights — Lighthouse w wersji online, dodaje dane polowe CrUX
+- CLI: `npx lighthouse https://example.com --output html`
+- VS Code i inne IDE — wtyczki z integracją Lighthouse
+
+## Cztery kategorie audytu
+
+**Performance** — metryki szybkości (LCP, INP/TBT, CLS, FCP, Speed Index). Daje wynik 0–100 na podstawie ważonej średniej metryk.
+
+**Accessibility** — czy strona jest użyteczna dla osób z niepełnosprawnościami: kontrast tekstu, atrybuty `alt`, etykiety formularzy, nawigacja klawiaturą.
+
+**Best Practices** — czy strona stosuje nowoczesne standardy: HTTPS, brak błędów w konsoli, poprawne meta viewport, bezpieczne zasoby.
+
+**SEO** — podstawowe sygnały SEO: meta description, title, robots, linkowanie, czytelność tekstu na mobile.
+
+> Lighthouse nie zastępuje pełnego audytu SEO. Sprawdza tylko techniczne minimum — nie analizuje jakości treści, linków zewnętrznych ani pozycji w SERP.
+
+## Co Lighthouse mierzy, a czego nie
+
+**Mierzy:**
+- Czas ładowania strony w kontrolowanych warunkach lab
+- Problemy z dostępnością wykrywalne automatycznie (~30% wszystkich problemów dostępności)
+- Podstawowe błędy techniczne SEO
+
+**Nie mierzy:**
+- Realnego doświadczenia użytkowników (do tego służą dane CrUX / field data)
+- Jakości treści
+- Autorytetu domeny
+- Problemów dostępności wymagających oceny człowieka
+
+## Jak interpretować wynik Performance
+
+Wynik Lighthouse Performance to syntetyczny wskaźnik laboratoryjny — nie jest bezpośrednim sygnałem rankingowym Google. Ale wskazuje na realne problemy warte naprawy.
+
+Wagi metryk w wyniku Performance (wersja 10+):
+
+| Metryka | Waga |
+|---|---|
+| LCP | 25% |
+| TBT (proxy dla INP) | 30% |
+| CLS | 25% |
+| FCP | 10% |
+| Speed Index | 10% |
+
+## Różnica między uruchomieniami
+
+Wyniki Lighthouse mogą się różnić między kolejnymi testami — nawet na tej samej stronie. To normalne: test jest wrażliwy na zasoby CPU komputera, aktywność innych zakładek i sieć. Uruchom test 2–3 razy i weź medianę.
+
+## Tryb Incognito
+
+Uruchamiaj Lighthouse w trybie incognito lub z wyłączonymi rozszerzeniami. Blokery reklam i menedżery haseł mogą zaburzać wyniki — szczególnie TBT i czas ładowania skryptów.
+
+## Co robić z raportem
+
+1. Sprawdź sekcję "Możliwości" w Performance — każdy element ma szacowany zysk w sekundach
+2. Nie naprawiaj wszystkiego naraz — skup się na 2–3 pozycjach z największym wpływem
+3. Uruchom ponownie po wdrożeniu zmiany — żeby zobaczyć realny efekt
+4. Przy pracy nad dostępnością: Lighthouse znajdzie automatycznie ~30% problemów, resztę trzeba sprawdzić ręcznie

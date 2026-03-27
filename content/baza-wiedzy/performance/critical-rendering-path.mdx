@@ -1,0 +1,94 @@
+# Critical Rendering Path
+
+Critical Rendering Path (CRP) to sekwencja kroków które przeglądarka musi wykonać zanim użytkownik zobaczy cokolwiek na ekranie. Zrozumienie tego procesu pomaga diagnozować co dokładnie opóźnia wyświetlenie strony.
+
+## Jak przeglądarka buduje stronę
+
+Po otrzymaniu odpowiedzi od serwera przeglądarka przechodzi przez kilka etapów:
+
+**1. Parsowanie HTML → DOM**
+Przeglądarka czyta HTML linia po linii i buduje Document Object Model (DOM) — strukturę drzewa reprezentującą elementy strony. Jeśli napotka `<script>` bez `async` lub `defer`, **zatrzymuje parsowanie** i wykonuje skrypt.
+
+**2. Parsowanie CSS → CSSOM**
+Równolegle z HTML przeglądarka pobiera i parsuje pliki CSS, budując CSS Object Model (CSSOM). CSS jest **render-blocking** — przeglądarka nie wyrenderuje strony dopóki nie ma pełnego CSSOM.
+
+**3. DOM + CSSOM → Render Tree**
+Przeglądarka łączy DOM i CSSOM w Render Tree — drzewo zawierające tylko elementy widoczne na stronie (np. bez elementów z `display: none`).
+
+**4. Layout (Reflow)**
+Obliczenie pozycji i rozmiarów każdego elementu na stronie. Kosztowna operacja — unikaj jej wielokrotnego wyzwalania przez zmiany DOM w JavaScript.
+
+**5. Paint**
+Narysowanie pikseli na ekranie. Tutaj użytkownik po raz pierwszy coś widzi.
+
+**6. Composite**
+Złożenie warstw w finalny obraz. Animacje na `transform` i `opacity` działają tu — nie wyzwalają Layout ani Paint.
+
+## Co blokuje renderowanie
+
+**CSS blokuje renderowanie (zawsze)**
+Każdy zewnętrzny plik CSS w `<head>` musi być pobrany i sparsowany zanim strona się wyrenderuje. Dlatego minimalizacja i łączenie plików CSS ma znaczenie dla FCP i LCP.
+
+**JavaScript blokuje parsowanie (domyślnie)**
+Tag `<script>` bez atrybutów zatrzymuje parsowanie HTML do czasu wykonania skryptu. Rozwiązanie:
+
+```html
+<!-- Blokuje parsowanie -->
+<script src="script.js"></script>
+
+<!-- Pobiera równolegle, wykonuje po parsowaniu HTML -->
+<script src="script.js" defer></script>
+
+<!-- Pobiera równolegle, wykonuje natychmiast po pobraniu -->
+<script src="script.js" async></script>
+```
+
+`defer` — dla skryptów które potrzebują DOM. Zachowuje kolejność wykonania.
+`async` — dla skryptów niezależnych (np. analityka). Nie zachowuje kolejności.
+
+## Zasoby krytyczne vs niekrytyczne
+
+**Krytyczne** — muszą się załadować przed pierwszym renderem: CSS dla treści above the fold, czcionki webowe.
+
+**Niekrytyczne** — mogą poczekać: skrypty analityki, obrazy poniżej łamania, komponenty ładowane na żądanie.
+
+## Critical CSS — technika inline
+
+Zamiast ładować cały plik CSS przed renderem, można wyciągnąć CSS potrzebny do wyrenderowania treści above the fold i wstawić go inline w `<head>`:
+
+```html
+<head>
+  <!-- Critical CSS inline - renderuje od razu -->
+  <style>
+    body { font-family: sans-serif; }
+    .hero { background: #f5f5f5; }
+  </style>
+  <!-- Reszta CSS ładuje się asynchronicznie -->
+  <link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'" />
+</head>
+```
+
+To zaawansowana technika — Next.js i nowoczesne bundlery częściowo robią to automatycznie.
+
+## Resource hints — podpowiedzi dla przeglądarki
+
+Możesz poinstruować przeglądarkę żeby wcześniej pobrała zasoby:
+
+```html
+<!-- Połącz się wcześniej z zewnętrzną domeną -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+
+<!-- Pobierz zasób z wyprzedzeniem (np. obraz LCP) -->
+<link rel="preload" href="hero.webp" as="image" />
+
+<!-- Pobierz w tle z niskim priorytetem -->
+<link rel="prefetch" href="nastepna-strona.js" />
+```
+
+`preload` jest szczególnie przydatny dla obrazu LCP i czcionek webowych — skraca czas do ich wyświetlenia bez czekania aż przeglądarka natrafi na nie podczas parsowania.
+
+## Wpływ na metryki
+
+- **FCP (First Contentful Paint)** — bezpośrednio zależy od CRP: im mniej blokujących zasobów, tym szybciej
+- **LCP** — zależy od momentu załadowania największego elementu; preload na obraz LCP może znacząco go poprawić
+- **TBT/INP** — długo wykonujące się skrypty blokują wątek główny i opóźniają reakcję na interakcje

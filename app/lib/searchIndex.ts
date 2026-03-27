@@ -45,4 +45,11 @@ export const searchIndex: SearchItem[] = [
   { title: "SEO vs AEO vs GEO", description: "3 warstwy widoczności: rankingi, bycie odpowiedzią i cytowania w modelach AI.", url: "/baza-wiedzy/seo-ai/seo-vs-aeo-vs-geo", category: "SEO AI" },
   { title: "AI Visibility Audit", description: "Jak testować widoczność marki w AI — metodyka, narzędzia i interpretacja wyników.", url: "/baza-wiedzy/seo-ai/ai-visibility-audit", category: "SEO AI" },
   { title: "Framework 12 intencji", description: "Mapa promptów do monitoringu SEO AI — 12 typów intencji zakupowych.", url: "/baza-wiedzy/seo-ai/framework-12-intencji", category: "SEO AI" },
+  // Baza wiedzy – Performance
+  { title: "Core Web Vitals", description: "LCP, INP, CLS — jak je mierzyć, diagnozować i poprawiać.", url: "/baza-wiedzy/performance/core-web-vitals", category: "Performance" },
+  { title: "PageSpeed Insights", description: "Jak czytać wyniki PSI, różnica lab vs field data i co z tym zrobić.", url: "/baza-wiedzy/performance/pagespeed-insights", category: "Performance" },
+  { title: "Lighthouse", description: "Wbudowany audytor Chrome — co mierzy, jak uruchomić i jak interpretować wyniki.", url: "/baza-wiedzy/performance/lighthouse", category: "Performance" },
+  { title: "Optymalizacja obrazów", description: "WebP, AVIF, rozmiar, kompresja — najczęstszy powód wolnej strony.", url: "/baza-wiedzy/performance/optymalizacja-obrazow", category: "Performance" },
+  { title: "Lazy loading", description: "Jak opóźnione ładowanie obrazów i zasobów przyspiesza czas pierwszego renderowania.", url: "/baza-wiedzy/performance/lazy-loading", category: "Performance" },
+  { title: "Critical Rendering Path", description: "Jak przeglądarka buduje stronę i co blokuje wyświetlenie treści.", url: "/baza-wiedzy/performance/critical-rendering-path", category: "Performance" },
 ];

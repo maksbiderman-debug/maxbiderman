@@ -1,0 +1,70 @@
+# Core Web Vitals
+
+Core Web Vitals to trzy wskaźniki wydajności, które Google uznało za oficjalny czynnik rankingowy od maja 2021. Mierzą to co użytkownik realnie odczuwa — nie to co widać w logach serwera.
+
+## Trzy wskaźniki i ich progi
+
+**LCP — Largest Contentful Paint**
+Czas do załadowania największego widocznego elementu — zwykle głównego zdjęcia lub nagłówka.
+
+| Wynik | Próg |
+|---|---|
+| Dobry | poniżej 2,5 s |
+| Wymaga poprawy | 2,5–4 s |
+| Słaby | powyżej 4 s |
+
+**INP — Interaction to Next Paint**
+Jak szybko strona reaguje na kliknięcia i inne interakcje użytkownika. INP zastąpił FID w marcu 2024 roku.
+
+| Wynik | Próg |
+|---|---|
+| Dobry | poniżej 200 ms |
+| Wymaga poprawy | 200–500 ms |
+| Słaby | powyżej 500 ms |
+
+**CLS — Cumulative Layout Shift**
+Jak bardzo elementy strony "skaczą" podczas ładowania. Wartość 0 oznacza brak przesunięć.
+
+| Wynik | Próg |
+|---|---|
+| Dobry | poniżej 0,1 |
+| Wymaga poprawy | 0,1–0,25 |
+| Słaby | powyżej 0,25 |
+
+## Dane polowe vs laboratoryjne
+
+> To kluczowa różnica, którą łatwo przeoczyć: Google ocenia Twoją stronę na podstawie danych polowych (CrUX) — realnych wizyt z Chrome. Dane laboratoryjne z PageSpeed Insights mogą pokazywać inny wynik.
+
+- **Dane polowe (field data)** — zbierane przez Chrome z prawdziwych użytkowników, raportowane w Search Console
+- **Dane laboratoryjne (lab data)** — symulowany test z kontrolowanymi warunkami sieciowymi
+
+Zdarza się, że strona świetnie wygląda w lab, a w polu ma słabe CWV — bo realny ruch jest na słabszych urządzeniach lub wolnym LTE.
+
+## Jak sprawdzić CWV swojej strony
+
+- **Google Search Console** → raport "Wrażenia ze strony" — pokazuje dane polowe zagregowane po URL
+- **PageSpeed Insights** — dane lab i pole dla konkretnego URL
+- **Lighthouse w Chrome DevTools** (F12 → Lighthouse) — tylko lab, ale szybkie i szczegółowe
+- **Rozszerzenie Web Vitals** do Chrome — mierzy CWV na żywo podczas przeglądania
+
+## Najczęstsze przyczyny złych CWV
+
+**Słabe LCP:**
+- Duże, nieskompresowane zdjęcia (najczęstszy powód)
+- Obraz LCP ładowany przez CSS lub JavaScript zamiast bezpośrednio w HTML
+- Brak atrybutu `fetchpriority="high"` na głównym obrazie
+- Wolny serwer (wysoki TTFB)
+
+**Słabe INP:**
+- Ciężki JavaScript blokujący wątek główny
+- Dużo analityki i tagów ładowanych synchronicznie
+- Frameworki SPA z wolną hydracją
+
+**Słabe CLS:**
+- Obrazy bez podanych wymiarów (`width` i `height`)
+- Czcionki webowe ładowane bez `font-display: swap`
+- Reklamy i embedy bez zarezerwowanego miejsca
+
+## Wpływ na SEO i konwersje
+
+Słabe CWV nie wysyłają Cię na dno wyników — ale przy zbliżonej jakości treści przesądzają o kolejności. Badania Google pokazują, że strony z dobrymi CWV mają o 24% mniej porzuceń. Każda sekunda opóźnienia LCP to średnio 7% mniej konwersji.

@@ -1,0 +1,76 @@
+# Lazy loading
+
+Lazy loading (opóźnione ładowanie) to technika polegająca na tym, że zasoby — najczęściej obrazy i iframes — są pobierane dopiero gdy użytkownik zbliża się do nich podczas scrollowania. Strona ładuje się szybciej, bo przy wejściu pobiera tylko to, co jest widoczne na ekranie.
+
+## Jak działa
+
+Bez lazy loadingu przeglądarka przy wczytaniu strony pobiera wszystkie obrazy — nawet te na samym dole, których użytkownik może nigdy nie zobaczyć. Z lazy loadingiem pobiera tylko zasoby w viewporcie (i nieco poniżej niego jako bufor).
+
+## Natywny lazy loading
+
+Od 2019 roku przeglądarki obsługują lazy loading bez JavaScript — wystarczy atrybut HTML:
+
+```html
+<img src="zdjecie.webp" loading="lazy" alt="Opis" width="800" height="600" />
+```
+
+Atrybut `loading="lazy"` działa też dla iframes:
+
+```html
+<iframe src="https://www.youtube.com/embed/..." loading="lazy"></iframe>
+```
+
+Wsparcie przeglądarek: Chrome, Firefox, Edge, Safari (15.4+) — pokrywa ponad 95% użytkowników.
+
+## Kiedy stosować, a kiedy nie
+
+**Stosuj lazy loading dla:**
+- Obrazów poniżej linii łamania (below the fold) — te których użytkownik nie widzi od razu
+- Galerii ze zdjęciami
+- Iframes (YouTube, Google Maps, Vimeo)
+- Długich stron z dużą ilością treści
+
+**Nie stosuj lazy loading dla:**
+- Obrazu LCP (Largest Contentful Paint) — głównego obrazu na górze strony. Lazy loading opóźni jego ładowanie i pogorszy LCP
+- Logo i nagłówka strony
+- Pierwszych 2–3 obrazów na stronie — zazwyczaj są widoczne bez scrollowania
+
+> Dodanie `loading="lazy"` na obraz LCP to jeden z najczęstszych błędów optymalizacyjnych. Zamiast przyspieszać, spowalnia najważniejszy element.
+
+## Priorytet LCP a lazy loading
+
+Dobrą praktyką jest połączenie lazy loadingu dla reszty obrazów z `fetchpriority="high"` dla obrazu LCP:
+
+```html
+<!-- Obraz LCP — ładuj od razu z wysokim priorytetem -->
+<img src="hero.webp" fetchpriority="high" alt="Hero image" />
+
+<!-- Pozostałe obrazy — ładuj leniwie -->
+<img src="galeria-1.webp" loading="lazy" alt="..." />
+<img src="galeria-2.webp" loading="lazy" alt="..." />
+```
+
+## Wpływ na Core Web Vitals
+
+Lazy loading ma bezpośredni wpływ na dwie metryki:
+
+- **LCP** — może poprawić (mniej konkurencji o bandwidth przy starcie) lub pogorszyć (jeśli dotyczy obrazu LCP)
+- **CLS** — wymaga podania `width` i `height` na obrazach, inaczej przeglądarka nie zna wymiarów i layout skacze przy ładowaniu
+
+Zawsze dodawaj wymiary obrazu gdy używasz lazy loadingu:
+
+```html
+<img src="foto.webp" loading="lazy" width="1200" height="800" alt="..." />
+```
+
+## Lazy loading JavaScript (kod na żądanie)
+
+Poza obrazami, lazy loading stosuje się też do kodu JavaScript — ładowanie modułów tylko gdy są potrzebne. W Next.js robi się to przez `dynamic import`:
+
+```js
+const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
+  loading: () => <p>Ładowanie...</p>,
+});
+```
+
+To szczególnie przydatne dla edytorów tekstu, map, wykresów i innych ciężkich bibliotek które są potrzebne tylko w konkretnych miejscach aplikacji.

@@ -69,5 +69,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.7,
     },
+    ...[
+      "core-web-vitals",
+      "pagespeed-insights",
+      "lighthouse",
+      "optymalizacja-obrazow",
+      "lazy-loading",
+      "critical-rendering-path",
+    ].map((slug) => ({
+      url: `https://maxbiderman.pl/baza-wiedzy/performance/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
   ];
 }

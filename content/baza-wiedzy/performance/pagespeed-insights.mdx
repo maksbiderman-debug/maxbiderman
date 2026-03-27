@@ -1,0 +1,55 @@
+# PageSpeed Insights
+
+PageSpeed Insights (PSI) to darmowe narzędzie Google dostępne pod adresem pagespeed.web.dev. Wpisujesz URL i dostajesz raport z danymi laboratoryjnymi oraz — jeśli strona ma wystarczający ruch — danymi polowymi z CrUX.
+
+## Co pokazuje PSI
+
+Raport PSI dzieli się na dwie sekcje, które łatwo pomylić:
+
+**Dane polowe (Field Data / CrUX)**
+Dane z prawdziwych wizyt użytkowników Chrome z ostatnich 28 dni. To właśnie te dane Google bierze pod uwagę jako sygnał rankingowy. Jeśli strona ma za mały ruch, sekcja ta nie pojawi się wcale.
+
+**Dane laboratoryjne (Lab Data / Lighthouse)**
+Symulowany test z emulowanym urządzeniem mobilnym i ustandaryzowaną siecią. Przydatny do diagnozowania problemów, ale nie jest tożsamy z oceną Google.
+
+> Jeśli dane polowe pokazują "Dobry", a lab pokazuje 40/100 — dla SEO liczy się to pierwsze. Lab służy do znajdowania problemów, nie do oceny rankingowej.
+
+## Jak czytać wynik punktowy
+
+PSI podaje wynik 0–100 dla danych laboratoryjnych:
+
+| Zakres | Znaczenie |
+|---|---|
+| 90–100 | Dobry |
+| 50–89 | Wymaga poprawy |
+| 0–49 | Słaby |
+
+Wynik punktowy to **syntetyczny wskaźnik lab** — nie jest bezpośrednim sygnałem rankingowym. Google rankinguje na podstawie danych polowych CWV, nie liczby z PSI.
+
+## Najważniejsze metryki w raporcie
+
+Oprócz trzech Core Web Vitals, PSI pokazuje też:
+
+- **FCP (First Contentful Paint)** — kiedy pojawia się pierwszy element na ekranie; nie jest sygnałem rankingowym, ale wpływa na odczucie szybkości
+- **TBT (Total Blocking Time)** — czas blokowania wątku głównego; w lab zastępuje INP
+- **Speed Index** — jak szybko treść staje się wizualnie kompletna
+
+## Sekcja "Możliwości" i "Diagnostyka"
+
+Poniżej metryk PSI lista konkretnych problemów do naprawy:
+
+- **Możliwości** — zmiany które mogą skrócić czas ładowania (np. "Usuń zasoby blokujące renderowanie")
+- **Diagnostyka** — informacje o praktykach wpływających na wydajność (np. "Obrazy nie mają jawnych wymiarów")
+
+Każdy element ma szacowany zysk w sekundach. Zacznij od tego z największą wartością.
+
+## Mobile vs Desktop
+
+PSI domyślnie testuje wersję mobilną, co często daje gorszy wynik niż desktop — emulowany telefon ma ograniczoną moc obliczeniową. Nie optymalizuj pod desktop, jeśli większość ruchu pochodzi z telefonów.
+
+## Praktyczne wskazówki
+
+- Testuj kilka razy — wyniki lab mogą się nieznacznie różnić między pomiarami
+- Testuj stronę po wdrożeniu zmian, nie w trybie deweloperskim
+- Porównuj strony konkurencji — PSI działa dla każdego publicznego URL
+- Nie gon za wynikiem 100 — różnica między 85 a 100 w danych lab ma marginalne znaczenie dla SEO
