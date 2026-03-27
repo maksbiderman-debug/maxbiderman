@@ -1,0 +1,35 @@
+# Core Web Vitals
+
+Core Web Vitals to trzy mierzalne sygnały UX, które Google uznało za oficjalny czynnik rankingowy od maja 2021 roku. Mierzą to, co użytkownik realnie odczuwa odwiedzając stronę: czy się szybko załadowała, czy reaguje na kliknięcia i czy nie "skacze" podczas ładowania.
+
+## Trzy wskaźniki
+
+**LCP — Largest Contentful Paint (Wyświetlenie Największego Elementu)**
+Czas do załadowania głównego elementu strony — np. dużego zdjęcia lub banera. Cel: poniżej **2,5 sekundy**.
+
+**INP — Interaction to Next Paint (Czas Reakcji na Interakcję)**
+Jak szybko strona reaguje na kliknięcia i inne działania użytkownika. Cel: poniżej **200 ms**. INP zastąpił FID w marcu 2024 roku — starsze raporty mogą pokazywać nieaktualną metrykę FID.
+
+**CLS — Cumulative Layout Shift (Skumulowane Przesunięcie Układu)**
+Jak bardzo elementy strony "skaczą" podczas ładowania. Cel: poniżej **0,1**.
+
+## Dane polowe vs laboratoryjne
+
+Dane zbierane są z prawdziwych wizyt użytkowników (CrUX — Chrome User Experience Report), nie tylko z testów laboratoryjnych. To ważna różnica — PageSpeed Insights pokazuje wyniki laboratoryjne, które mogą się różnić od rzeczywistych danych polowych.
+
+## Jak sprawdzić?
+
+- Google Search Console → raport "Wrażenia ze strony"
+- PageSpeed Insights
+- Lighthouse (wbudowany w Chrome DevTools, klawisz F12)
+- Rozszerzenie Web Vitals do Chrome
+
+## Wpływ na SEO i konwersje
+
+Słabe Core Web Vitals mogą obniżać rankingi, szczególnie gdy treść jest porównywalna z konkurencją — wtedy UX przesądza. Wolna strona to też niższa konwersja z każdego kanału, nie tylko z SEO.
+
+## Częste pułapki
+
+- Skupianie się tylko na LCP i ignorowanie CLS.
+- Strony WordPress z wieloma wtyczkami często mają problemy z LCP i INP.
+- Porównywanie wyników laboratoryjnych z danymi polowymi — to dwa różne pomiary.

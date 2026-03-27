@@ -6,27 +6,25 @@ export const metadata: Metadata = {
   description: "Notatki i zasoby o SEO technicznym, on-page i link buildingu.",
 };
 
-const entries = [
-  {
-    slug: "sitemap",
-    title: "Sitemap.xml",
-    description: "Czym jest sitemap i dlaczego pomaga Google indeksować Twoją stronę.",
-  },
-  {
-    slug: "robots-txt",
-    title: "Robots.txt",
-    description: "Jak kontrolować co Google może, a czego nie może indeksować.",
-  },
-  {
-    slug: "open-graph",
-    title: "Open Graph",
-    description: "Jak Twoja strona wygląda gdy ktoś wklei link na LinkedIn czy Facebooku.",
-  },
-  {
-    slug: "schema-markup",
-    title: "Schema markup",
-    description: "Dane strukturalne które pomagają Google lepiej rozumieć Twoją treść i wyświetlać rich snippets.",
-  },
+export const entries = [
+  { slug: "co-to-jest-seo", title: "Co to jest SEO", description: "Z czego się składa i jak działa — technika, treść, reputacja." },
+  { slug: "seo-vs-sem-vs-ppc", title: "SEO vs SEM vs PPC", description: "Trzy pojęcia które się mieszają — czym się różnią i kiedy co wybrać." },
+  { slug: "frazy-kluczowe", title: "Frazy kluczowe i keyword research", description: "Jak dobierać frazy pod intencję użytkownika, a nie tylko pod wolumen." },
+  { slug: "content-i-copywriting", title: "Content i SEO copywriting", description: "Jak pisać treści które rankują — struktura, intencja, aktualizacja." },
+  { slug: "eeat", title: "E-E-A-T", description: "Jak Google ocenia wiarygodność i ekspertyzę strony." },
+  { slug: "optymalizacja-techniczna", title: "Optymalizacja techniczna SEO", description: "Indeksacja, duplikacja, szybkość, mobile — co sprawdzić w audycie." },
+  { slug: "link-building", title: "Link building", description: "Pozyskiwanie linków jako sygnał autorytetu — zasady i pułapki." },
+  { slug: "jak-google-indeksuje-strony", title: "Jak Google odkrywa i indeksuje strony", description: "Crawl, indeksowanie, sitemap — od odkrycia URL do pojawienia się w wynikach." },
+  { slug: "jak-dziala-serp", title: "Jak działa SERP i co wpływa na kliknięcia", description: "Wyniki organiczne, reklamy, featured snippets i CTR." },
+  { slug: "core-web-vitals", title: "Core Web Vitals", description: "LCP, INP, CLS — trzy wskaźniki wydajności które Google bierze pod uwagę." },
+  { slug: "google-search-console", title: "Google Search Console", description: "Darmowe narzędzie Google do monitorowania widoczności i indeksacji." },
+  { slug: "google-analytics-4", title: "Google Analytics 4", description: "Jak mierzyć ruch i konwersje — podstawy GA4 i kluczowe raporty." },
+  { slug: "algorytmy-google", title: "Algorytmy Google i aktualizacje", description: "Core Updates, Helpful Content, filtry — jak rozumieć zmiany widoczności." },
+  { slug: "dlaczego-seo-trwa", title: "Dlaczego SEO trwa", description: "Horyzont czasowy SEO i jak o tym rozmawiać z klientem." },
+  { slug: "sitemap", title: "Sitemap.xml", description: "Czym jest sitemap i dlaczego pomaga Google indeksować Twoją stronę." },
+  { slug: "robots-txt", title: "Robots.txt", description: "Jak kontrolować co Google może, a czego nie może indeksować." },
+  { slug: "open-graph", title: "Open Graph", description: "Jak Twoja strona wygląda gdy ktoś wklei link na LinkedIn czy Facebooku." },
+  { slug: "schema-markup", title: "Schema markup", description: "Dane strukturalne które pomagają Google lepiej rozumieć Twoją treść." },
 ];
 
 export default function SeoPage() {

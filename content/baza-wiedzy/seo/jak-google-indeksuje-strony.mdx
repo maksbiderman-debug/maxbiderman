@@ -1,0 +1,32 @@
+# Jak Google odkrywa i indeksuje strony
+
+Zanim strona pojawi się w wynikach wyszukiwania, Google musi ją najpierw odkryć, przeskanować i zdecydować, czy warto ją zaindeksować. To fundament SEO — jeśli strona nie jest zaindeksowana, nie ma widoczności organicznej.
+
+## Trzy etapy
+
+**1. Odkrycie (Crawl Discovery)**
+Googlebot odkrywa URL-e przez linki z innych stron lub przez sitemapę. Nowe strony bez linków zewnętrznych mogą czekać tygodniami na pierwsze odwiedziny robota.
+
+**2. Skanowanie (Crawling)**
+Robot skanuje zawartość strony — tekst, linki, meta tagi, dane strukturalne. Sprawdza też, czy robots.txt nie blokuje dostępu i jaki jest status HTTP.
+
+**3. Indeksowanie (Indexing)**
+Google decyduje, czy stronę zaindeksować. Może odmówić jeśli wykryje duplikaty, złą kanonikalizację, tag `noindex`, błędy lub treść niskiej jakości.
+
+## Kluczowe pojęcia
+
+- **Googlebot** — robot Google odpowiedzialny za skanowanie stron.
+- **Indeks Google** — baza danych stron, z której Google pobiera wyniki.
+- **Sitemap** — plik XML z listą URL-i pomagający Googlebotowi odkrywać strony.
+- **Canonical** — tag HTML wskazujący Google która wersja URL-a jest "prawdziwa".
+- **Crawl budget** — limit stron, które Googlebot skanuje w danym czasie (ważne dla dużych serwisów).
+
+## Jak sprawdzić status indeksacji?
+
+Google Search Console → raport "Stan" — pokazuje które strony są zaindeksowane, które wykluczone i z jakiego powodu.
+
+## Częste pułapki
+
+- Nowe treści nie pojawiają się w Google przez tygodnie — często brak linków wewnętrznych lub błąd w robots.txt.
+- Ważne podstrony wykluczone z indeksu przez przypadkowe `noindex`.
+- Chaos w URL-ach (parametry, duplikaty) marnujący crawl budget.

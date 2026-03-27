@@ -1,29 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-
-const entries = [
-  {
-    slug: "sitemap",
-    title: "Sitemap.xml",
-    description: "Czym jest sitemap i dlaczego pomaga Google indeksować Twoją stronę.",
-  },
-  {
-    slug: "robots-txt",
-    title: "Robots.txt",
-    description: "Jak kontrolować co Google może, a czego nie może indeksować.",
-  },
-  {
-    slug: "open-graph",
-    title: "Open Graph",
-    description: "Jak Twoja strona wygląda gdy ktoś wklei link na LinkedIn czy Facebooku.",
-  },
-  {
-    slug: "schema-markup",
-    title: "Schema markup",
-    description: "Dane strukturalne które pomagają Google lepiej rozumieć Twoją treść i wyświetlać rich snippets.",
-  },
-];
+import { entries } from "../page";
 
 export function generateStaticParams() {
   return entries.map((e) => ({ slug: e.slug }));
