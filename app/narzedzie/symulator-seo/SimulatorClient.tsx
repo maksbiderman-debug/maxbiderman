@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 type ToggleId =
@@ -74,7 +74,7 @@ function buildGbItems(a: Record<ToggleId, boolean>): Item[] {
     { label: "Core Web Vitals", value: a.vitals ? "LCP 1.8s ✅  CLS 0.05 ✅  INP 180ms ✅" : "LCP 4.5s ❌  CLS 0.42 ❌  INP 620ms ❌", status: a.vitals ? "ok" : "warn", note: a.vitals ? undefined : "Słabe CWV to sygnał rankingowy — Google preferuje szybsze strony." },
     { label: "E-E-A-T", value: a.eeat ? "Autor, credentials, About page — sygnały obecne" : "[brak sygnałów ekspertyzy]", status: a.eeat ? "ok" : "warn", note: a.eeat ? undefined : "Brak autora i bio. Google trudniej ocenić wiarygodność strony." },
     { label: "Obrazy", value: a.alt ? "1/1 z atrybutem alt" : "0/1 z atrybutem alt", status: a.alt ? "ok" : "warn", note: a.alt ? undefined : "Obraz nieindeksowalny. Brakuje kontekstu dla crawlera." },
-    { label: "Canonical URL", value: a.canonical ? "https://widoczni.com/agencja-seo-warszawa" : "[brak]", status: a.canonical ? "ok" : "warn", note: a.canonical ? undefined : "Ryzyko duplikacji treści (http/https, www/bez www)." },
+    { label: "Canonical URL", value: a.canonical ? "https://widoczni.com/agencja-seo-poznan" : "[brak]", status: a.canonical ? "ok" : "warn", note: a.canonical ? undefined : "Ryzyko duplikacji treści (http/https, www/bez www)." },
     { label: "Sitemap.xml", value: a.sitemap ? "Strona w sitemap — odkryta szybciej" : "[brak w sitemap]", status: a.sitemap ? "ok" : "info", note: a.sitemap ? undefined : "Google może nie odkryć strony od razu bez sitemap." },
     { label: "Linki wewnętrzne", value: a.links ? "3 linki → /cennik, /o-nas, /kontakt" : "[brak]", status: a.links ? "ok" : "info", note: a.links ? undefined : "Crawler może nie odkryć innych podstron z tego URL." },
   ];
@@ -157,27 +157,43 @@ function ItemRow({ item }: { item: Item }) {
   );
 }
 
+// Wrapper for clickable preview elements in the page body
+function PreviewBlock({
+  id,
+  active,
+  onToggle,
+  label,
+  children,
+}: {
+  id: ToggleId;
+  active: boolean;
+  onToggle: () => void;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      onClick={onToggle}
+      title={active ? `Wyłącz: ${label}` : `Włącz: ${label}`}
+      className="cursor-pointer group rounded-lg -mx-2 px-2 py-1.5 hover:bg-zinc-50 transition-colors"
+    >
+      <div className={`transition-opacity duration-200 ${active ? "opacity-100" : "opacity-30"}`}>
+        {children}
+      </div>
+      <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1">
+        <span>← {label}</span>
+        {!active && <span className="text-red-400 font-medium">✕ wyłączony</span>}
+      </p>
+    </div>
+  );
+}
+
 export default function SimulatorClient() {
   const [active, setActive] = useState<Record<ToggleId, boolean>>(INITIAL);
   const [tab, setTab] = useState<TabId>("googlebot");
-  const [toast, setToast] = useState<string | null>(null);
-  const toastRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const toggle = (id: ToggleId) => {
-    setActive((p) => {
-      const next = !p[id];
-      if (!next) {
-        const def = ALL_TOGGLES.find((t) => t.id === id);
-        if (def) {
-          if (toastRef.current) clearTimeout(toastRef.current);
-          setToast(def.label);
-          toastRef.current = setTimeout(() => setToast(null), 2500);
-        }
-      }
-      return { ...p, [id]: next };
-    });
-  };
-  const resetAll = () => { setActive(INITIAL); setToast(null); };
+  const toggle = (id: ToggleId) => setActive((p) => ({ ...p, [id]: !p[id] }));
+  const resetAll = () => setActive(INITIAL);
   const disableAll = () =>
     setActive(Object.fromEntries(Object.keys(INITIAL).map((k) => [k, false])) as Record<ToggleId, boolean>);
 
@@ -193,218 +209,211 @@ export default function SimulatorClient() {
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-24">
-      <div className="mb-10">
+
+      {/* Header */}
+      <div className="mb-6">
         <h1 className="text-3xl font-semibold tracking-tight text-purple-800 mb-3">Symulator SEO</h1>
         <p className="text-zinc-500 max-w-2xl">
-          Włączaj i wyłączaj elementy strony — sprawdź jak reaguje Googlebot, jak AI (RAG) decyduje o cytowaniu, jak zmienia się score A/R/E i jak strona wygląda w Google i social media.
+          Włączaj i wyłączaj elementy strony — sprawdź jak reaguje Googlebot, jak AI (RAG) decyduje o cytowaniu i jak zmienia się score A/R/E.
         </p>
       </div>
 
-      {/* Toggles grouped */}
-      <div className="mb-8 space-y-4">
-        {GROUPS.map((g) => (
-          <div key={g.label}>
-            <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-2">{g.label}</p>
-            <div className="flex flex-wrap gap-2">
-              {g.items.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => toggle(t.id)}
-                  title={t.description}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all cursor-pointer ${
-                    active[t.id] ? "bg-zinc-900 text-white" : "bg-zinc-100 text-zinc-400 line-through"
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-        <div className="flex gap-3 pt-1">
+      {/* Controls bar */}
+      <div className="flex items-center justify-between mb-6">
+        <p className="text-sm text-zinc-400 italic">Kliknij element na podglądzie strony żeby go włączyć lub wyłączyć.</p>
+        <div className="flex gap-3">
           <button onClick={resetAll} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">↺ Włącz wszystko</button>
           <span className="text-zinc-300">·</span>
           <button onClick={disableAll} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">✕ Wyłącz wszystko</button>
         </div>
       </div>
 
-      {/* Two-column layout */}
+      {/* Main layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-        {/* ── Left: Mock page ── */}
+        {/* ── Left: Interactive mock page ── */}
         <div>
           <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">Podgląd strony</p>
           <div className="border border-zinc-200 rounded-xl overflow-hidden">
 
             {/* Browser chrome */}
-            <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-2.5 flex items-center gap-3">
-              <div className="flex gap-1.5">
+            <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-2.5 flex items-center gap-2">
+              <div className="flex gap-1.5 shrink-0">
                 <div className="w-3 h-3 rounded-full bg-zinc-300" />
                 <div className="w-3 h-3 rounded-full bg-zinc-300" />
                 <div className="w-3 h-3 rounded-full bg-zinc-300" />
               </div>
-              <div className="flex-1 bg-white border border-zinc-200 rounded px-3 py-1 text-xs text-zinc-500 font-mono flex items-center justify-between">
-                <span>widoczni.com/agencja-seo-poznan</span>
-                {active.sitemap && <span title="sitemap.xml" className="text-zinc-400">🗺</span>}
+              <div className="flex-1 bg-white border border-zinc-200 rounded px-3 py-1 text-xs text-zinc-500 font-mono truncate">
+                widoczni.com/agencja-seo-poznan
               </div>
-              <span className={`text-xs px-2 py-0.5 rounded font-medium ${active.vitals ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
+              <button
+                onClick={() => toggle("sitemap")}
+                title={active.sitemap ? "Wyłącz sitemap.xml" : "Włącz sitemap.xml"}
+                className={`shrink-0 text-xs px-2 py-0.5 rounded font-medium cursor-pointer transition-all ${active.sitemap ? "bg-zinc-100 text-zinc-500 hover:bg-zinc-200" : "bg-zinc-50 text-zinc-300 line-through"}`}
+              >
+                🗺 sitemap
+              </button>
+              <button
+                onClick={() => toggle("vitals")}
+                title={active.vitals ? "Wyłącz Core Web Vitals" : "Włącz Core Web Vitals"}
+                className={`shrink-0 text-xs px-2 py-0.5 rounded font-medium cursor-pointer transition-all ${active.vitals ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : "bg-red-50 text-red-600 hover:bg-red-100"}`}
+              >
                 {active.vitals ? "⚡ Fast" : "🐢 Slow"}
-              </span>
+              </button>
             </div>
 
-            {/* HTML <head> */}
-            <div className="bg-zinc-900 px-4 py-3 space-y-1.5 text-xs font-mono">
+            {/* HTML <head> — each line clickable */}
+            <div className="bg-zinc-900 px-4 py-3 space-y-1 text-xs font-mono">
 
-              {/* robots */}
-              <div className={`transition-opacity duration-200 ${active.robots ? "opacity-100" : "opacity-25"}`}>
+              <div
+                onClick={() => toggle("robots")}
+                title={active.robots ? "Wyłącz robots" : "Włącz robots"}
+                className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.robots ? "opacity-100" : "opacity-30"}`}
+              >
                 <span className="text-zinc-500">&lt;meta </span>
                 <span className="text-emerald-400">name</span>
                 <span className="text-zinc-500">=</span>
                 <span className="text-amber-300">&quot;robots&quot;</span>
                 <span className="text-zinc-500"> content=</span>
-                <span className={`text-amber-300 ${!active.robots ? "line-through" : ""}`}>&quot;{active.robots ? "index, follow" : "noindex"}&quot;</span>
+                <span className="text-amber-300">&quot;{active.robots ? "index, follow" : "noindex"}&quot;</span>
                 <span className="text-zinc-500"> /&gt;</span>
                 {!active.robots && <span className="text-red-400 ml-2">← strona niewidoczna!</span>}
               </div>
 
-              {/* title */}
-              <div className={`transition-opacity duration-200 ${active.title ? "opacity-100" : "opacity-25"}`}>
+              <div
+                onClick={() => toggle("title")}
+                title={active.title ? "Wyłącz title" : "Włącz title"}
+                className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.title ? "opacity-100" : "opacity-30"}`}
+              >
                 <span className="text-zinc-500">&lt;title&gt;</span>
-                <span className={`text-zinc-300 ${!active.title ? "line-through" : ""}`}>Agencja SEO Poznań | Widoczni</span>
+                <span className="text-zinc-300">Agencja SEO Poznań | Widoczni</span>
                 <span className="text-zinc-500">&lt;/title&gt;</span>
               </div>
 
-              {/* meta description */}
-              <div className={`transition-opacity duration-200 ${active.meta ? "opacity-100" : "opacity-25"}`}>
+              <div
+                onClick={() => toggle("meta")}
+                title={active.meta ? "Wyłącz meta description" : "Włącz meta description"}
+                className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.meta ? "opacity-100" : "opacity-30"}`}
+              >
                 <span className="text-zinc-500">&lt;meta </span>
                 <span className="text-emerald-400">name</span>
                 <span className="text-zinc-500">=</span>
                 <span className="text-amber-300">&quot;description&quot;</span>
                 <span className="text-zinc-500"> content=</span>
-                <span className={`text-amber-300 ${!active.meta ? "line-through" : ""}`}>&quot;Pozycjonujemy od 2009...&quot;</span>
+                <span className="text-amber-300">&quot;Pozycjonujemy od 2009...&quot;</span>
                 <span className="text-zinc-500"> /&gt;</span>
               </div>
 
-              {/* canonical */}
-              <div className={`transition-opacity duration-200 ${active.canonical ? "opacity-100" : "opacity-25"}`}>
+              <div
+                onClick={() => toggle("canonical")}
+                title={active.canonical ? "Wyłącz canonical" : "Włącz canonical"}
+                className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.canonical ? "opacity-100" : "opacity-30"}`}
+              >
                 <span className="text-zinc-500">&lt;link </span>
                 <span className="text-emerald-400">rel</span>
                 <span className="text-zinc-500">=</span>
                 <span className="text-amber-300">&quot;canonical&quot;</span>
                 <span className="text-zinc-500"> href=</span>
-                <span className={`text-amber-300 ${!active.canonical ? "line-through" : ""}`}>&quot;https://widoczni.com/agencja-seo-poznan&quot;</span>
+                <span className="text-amber-300">&quot;https://widoczni.com/agencja-seo-poznan&quot;</span>
                 <span className="text-zinc-500"> /&gt;</span>
               </div>
 
-              {/* og:title */}
-              <div className={`transition-opacity duration-200 ${active.og ? "opacity-100" : "opacity-25"}`}>
+              <div
+                onClick={() => toggle("og")}
+                title={active.og ? "Wyłącz Open Graph" : "Włącz Open Graph"}
+                className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.og ? "opacity-100" : "opacity-30"}`}
+              >
                 <span className="text-zinc-500">&lt;meta </span>
                 <span className="text-emerald-400">property</span>
                 <span className="text-zinc-500">=</span>
                 <span className="text-amber-300">&quot;og:title&quot;</span>
                 <span className="text-zinc-500"> content=</span>
-                <span className={`text-amber-300 ${!active.og ? "line-through" : ""}`}>&quot;Agencja SEO Poznań | Widoczni&quot;</span>
+                <span className="text-amber-300">&quot;Agencja SEO Poznań | Widoczni&quot;</span>
                 <span className="text-zinc-500"> /&gt;</span>
               </div>
 
-              {/* schema */}
-              <div className={`transition-opacity duration-200 ${active.schema ? "opacity-100" : "opacity-25"}`}>
+              <div
+                onClick={() => toggle("schema")}
+                title={active.schema ? "Wyłącz Schema markup" : "Włącz Schema markup"}
+                className={`cursor-pointer hover:bg-zinc-800 rounded px-1 -mx-1 py-0.5 transition-colors ${active.schema ? "opacity-100" : "opacity-30"}`}
+              >
                 <span className="text-zinc-500">&lt;script </span>
                 <span className="text-emerald-400">type</span>
                 <span className="text-zinc-500">=</span>
                 <span className="text-amber-300">&quot;application/ld+json&quot;</span>
                 <span className="text-zinc-500">&gt; </span>
-                <span className={`text-blue-400 ${!active.schema ? "line-through" : ""}`}>{`{ "@type": "LocalBusiness" }`}</span>
+                <span className="text-blue-400">{`{ "@type": "LocalBusiness" }`}</span>
                 <span className="text-zinc-500"> &lt;/script&gt;</span>
               </div>
 
             </div>
 
-            {/* Page body */}
-            <div className="bg-white px-5 py-5 space-y-4">
+            {/* Page body — sections clickable */}
+            <div className="bg-white px-5 py-4 space-y-1">
 
-              {/* H1 */}
-              <div className={`transition-opacity duration-200 ${active.h1 ? "opacity-100" : "opacity-25"}`}>
+              <PreviewBlock id="h1" active={active.h1} onToggle={() => toggle("h1")} label="Nagłówek H1">
                 <p className={`text-lg font-bold text-zinc-900 leading-tight ${!active.h1 ? "line-through" : ""}`}>
                   {active.keywords ? "Agencja SEO Poznań — pozycjonowanie stron" : "Agencja SEO, która dowozi wyniki"}
                 </p>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  ← H1{active.keywords ? " z frazami kluczowymi" : " — brak fraz kluczowych"}
-                </p>
-              </div>
+              </PreviewBlock>
 
-              {/* Image */}
-              <div className={`transition-opacity duration-200 ${active.alt ? "opacity-100" : "opacity-50"}`}>
-                <div className="bg-zinc-100 rounded-lg h-12 flex items-center justify-center px-3">
-                  <span className="text-xs text-zinc-400 font-mono text-center">
-                    {active.alt ? 'alt="Zespół agencji SEO Widoczni w biurze w Warszawie"' : 'alt="" ← brak opisu obrazu'}
+              <PreviewBlock id="alt" active={active.alt} onToggle={() => toggle("alt")} label="Alt atrybuty">
+                <div className="bg-zinc-100 rounded-lg h-10 flex items-center justify-center px-3">
+                  <span className="text-xs text-zinc-400 font-mono">
+                    {active.alt ? 'alt="Zespół agencji SEO Widoczni w biurze w Poznaniu"' : 'alt="" ← brak opisu obrazu'}
                   </span>
                 </div>
-              </div>
+              </PreviewBlock>
 
-              {/* H2 */}
-              <div className={`transition-opacity duration-200 ${active.headings ? "opacity-100" : "opacity-25"}`}>
+              <PreviewBlock id="headings" active={active.headings} onToggle={() => toggle("headings")} label="Struktura H2/H3">
                 <p className={`font-semibold text-zinc-800 text-sm ${!active.headings ? "line-through" : ""}`}>
                   {active.keywords ? "Pozycjonowanie stron Poznań — dlaczego Widoczni?" : "Dlaczego klienci wybierają Widoczni?"}
                 </p>
-                <p className="text-xs text-zinc-400">← H2</p>
-              </div>
+              </PreviewBlock>
 
-              {/* Facts */}
-              <div className={`transition-opacity duration-200 ${active.facts ? "opacity-100" : "opacity-25"}`}>
+              <PreviewBlock id="facts" active={active.facts} onToggle={() => toggle("facts")} label="Konkretne fakty">
                 <div className={`bg-zinc-50 border border-zinc-100 rounded-lg px-3 py-2 text-sm text-zinc-700 ${!active.facts ? "line-through" : ""}`}>
                   🏆 <strong>1 200+ klientów</strong> od 2009 roku · <strong>+180%</strong> średni wzrost ruchu
                 </div>
-                <p className="text-xs text-zinc-400 mt-0.5">← konkretne fakty / liczby</p>
-              </div>
+              </PreviewBlock>
 
-              {/* E-E-A-T */}
-              <div className={`transition-opacity duration-200 ${active.eeat ? "opacity-100" : "opacity-25"}`}>
+              <PreviewBlock id="eeat" active={active.eeat} onToggle={() => toggle("eeat")} label="E-E-A-T">
                 <div className={`border border-zinc-100 rounded-lg px-3 py-2 text-xs text-zinc-600 ${!active.eeat ? "line-through" : ""}`}>
                   ✍️ <strong>Jan Kowalski</strong> · ekspert SEO, 15 lat doświadczenia · certyfikat Google
                 </div>
-                <p className="text-xs text-zinc-400 mt-0.5">← sygnał E-E-A-T (autor, credentials)</p>
-              </div>
+              </PreviewBlock>
 
-              {/* H2 second */}
-              <div className={`transition-opacity duration-200 ${active.headings ? "opacity-100" : "opacity-25"}`}>
-                <p className={`font-semibold text-zinc-800 text-sm ${!active.headings ? "line-through" : ""}`}>Jak działamy?</p>
-                <p className="text-xs text-zinc-400">← H2</p>
-              </div>
+              <PreviewBlock id="keywords" active={active.keywords} onToggle={() => toggle("keywords")} label="Słowa kluczowe">
+                <div className="flex gap-1.5 flex-wrap">
+                  {active.keywords
+                    ? ["agencja SEO", "pozycjonowanie", "Poznań"].map((k) => (
+                        <span key={k} className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">{k}</span>
+                      ))
+                    : <span className="text-xs text-zinc-400 line-through">brak fraz kluczowych w treści</span>
+                  }
+                </div>
+              </PreviewBlock>
 
-              {/* Internal links */}
-              <div className={`transition-opacity duration-200 ${active.links ? "opacity-100" : "opacity-25"}`}>
+              <PreviewBlock id="links" active={active.links} onToggle={() => toggle("links")} label="Linki wewnętrzne">
                 <div className="flex gap-2 flex-wrap">
                   {["Cennik", "O nas", "Kontakt"].map((l) => (
                     <span key={l} className={`text-xs px-2 py-1 bg-zinc-100 rounded text-zinc-600 ${!active.links ? "line-through" : ""}`}>→ {l}</span>
                   ))}
                 </div>
-                <p className="text-xs text-zinc-400 mt-0.5">← linki wewnętrzne</p>
-              </div>
+              </PreviewBlock>
 
-              {/* External */}
-              <div className={`border-t border-zinc-100 pt-3 transition-opacity duration-200 ${active.external ? "opacity-100" : "opacity-25"}`}>
+              <PreviewBlock id="external" active={active.external} onToggle={() => toggle("external")} label="Wzmianki zewnętrzne">
                 <p className={`text-xs text-zinc-500 ${!active.external ? "line-through" : ""}`}>
                   🔗 Wymieniony w: Marketer+, WhitePress, Forbes.pl
                 </p>
-                <p className="text-xs text-zinc-400 mt-0.5">← wzmianki zewnętrzne</p>
-              </div>
+              </PreviewBlock>
+
             </div>
           </div>
         </div>
 
         {/* ── Right: Analysis ── */}
         <div>
-          <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">Analiza</p>
-
-          {/* Toast */}
-          {toast && (
-            <div className="flex items-center gap-2 text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2.5 mb-3 transition-all">
-              <span className="text-base">⚠️</span>
-              <span><strong>{toast}</strong> wyłączony — sprawdź zmiany w analizie</span>
-            </div>
-          )}
-
           {/* Tab bar */}
           <div className="flex gap-1 bg-zinc-100 rounded-lg p-1 mb-4">
             {TABS.map((t) => (
@@ -488,7 +497,7 @@ export default function SimulatorClient() {
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-4 h-4 bg-zinc-200 rounded-sm shrink-0" />
                       <span className="text-xs text-zinc-500 font-mono">
-                        widoczni.com › {active.canonical ? "agencja-seo-warszawa" : "agencja-seo-warszawa?ref=home&utm=..."}
+                        widoczni.com › {active.canonical ? "agencja-seo-poznan" : "agencja-seo-poznan?ref=home&utm=..."}
                       </span>
                     </div>
                     <p className={`font-medium text-sm mb-1 leading-tight ${active.title ? "text-blue-600" : "text-zinc-500 italic"}`}>
@@ -573,6 +582,7 @@ export default function SimulatorClient() {
             </div>
           </div>
         </div>
+
       </div>
     </main>
   );
