@@ -23,7 +23,7 @@ export default function Search() {
       setResults([]);
       return;
     }
-    const found = fuse.search(query).slice(0, 5).map((r) => r.item);
+    const found = fuse.search(query).map((r) => r.item);
     setResults(found);
     setActiveIndex(0);
   }, [query]);
@@ -60,7 +60,7 @@ export default function Search() {
         className="text-sm bg-zinc-100 rounded-md px-3 py-1.5 text-zinc-700 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-zinc-300 w-40 focus:w-56 transition-all"
       />
       {open && results.length > 0 && (
-        <ul className="absolute right-0 top-full mt-2 w-72 bg-white border border-zinc-100 rounded-lg shadow-lg z-50 overflow-y-auto max-h-72">
+        <ul className="absolute right-0 top-full mt-2 w-72 bg-white border border-zinc-100 rounded-lg shadow-lg z-50 overflow-y-auto" style={{ maxHeight: "300px" }}>
           {results.map((item, i) => (
             <li key={item.url}>
               <a
