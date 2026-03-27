@@ -8,6 +8,11 @@ const entries = [
     title: "Sitemap.xml",
     description: "Czym jest sitemap i dlaczego pomaga Google indeksować Twoją stronę.",
   },
+  {
+    slug: "robots-txt",
+    title: "Robots.txt",
+    description: "Jak kontrolować co Google może, a czego nie może indeksować.",
+  },
 ];
 
 export function generateStaticParams() {

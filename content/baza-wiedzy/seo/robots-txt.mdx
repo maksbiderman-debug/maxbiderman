@@ -1,0 +1,26 @@
+# Robots.txt
+
+Plik robots.txt to instrukcja dla robotów wyszukiwarek — mówi im co mogą, a czego nie mogą indeksować na Twojej stronie. Znajdziesz go zawsze pod adresem `/robots.txt`.
+
+## Jak działa?
+
+Robot Google (Googlebot) zanim zacznie przeglądać stronę, najpierw sprawdza robots.txt. Jeśli znajdzie tam blokadę dla danej sekcji, omija ją.
+
+Podstawowa struktura:
+
+- **User-agent** — do którego robota odnosi się reguła. `*` oznacza wszystkich.
+- **Allow** — co można indeksować.
+- **Disallow** — czego nie można indeksować.
+- **Sitemap** — adres sitemapa, żeby robot wiedział gdzie go szukać.
+
+## Co warto blokować?
+
+Na blogu osobistym zazwyczaj blokujesz dostęp do:
+
+- Panelu admina (`/admin`)
+- Stron z wynikami wyszukiwania (`/search`)
+- Duplikatów treści (np. stron z parametrami URL jak `?sort=date`)
+
+## Ważna uwaga
+
+Robots.txt **nie jest zabezpieczeniem**. Blokuje tylko grzeczne roboty — złośliwe oprogramowanie go ignoruje. Do ukrywania prywatnych treści używaj autoryzacji, nie robots.txt.
