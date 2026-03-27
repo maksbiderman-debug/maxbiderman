@@ -231,6 +231,73 @@ function buildRagItems(a: Record<ToggleId, boolean>, c: PageContent): Item[] {
   ];
 }
 
+type AuditStep = {
+  id: ToggleId;
+  title: string;
+  what: string;
+  why: string;
+  tip: string;
+};
+
+const AUDIT_STEPS: AuditStep[] = [
+  {
+    id: "robots",
+    title: "Krok 1: Indeksowanie (robots)",
+    what: "Plik robots.txt i meta tag robots kontrolują czy Google może indeksować Twoją stronę.",
+    why: "Strona z dyrektywą noindex jest całkowicie niewidoczna w Google — wszystkie inne elementy SEO są bez znaczenia.",
+    tip: "Sprawdź: czy nie masz przypadkowo robots: noindex w <head> lub blokady w robots.txt.",
+  },
+  {
+    id: "title",
+    title: "Krok 2: Title tag",
+    what: "Tag <title> to tytuł strony widoczny w wynikach Google i w zakładce przeglądarki.",
+    why: "Brak tytułu obniża CTR — Google wygeneruje własny, zwykle mniej atrakcyjny. Tytuł to jeden z najsilniejszych sygnałów relevance.",
+    tip: "Dobry tytuł: do 60 znaków, zawiera główną frazę kluczową, opisuje zawartość strony.",
+  },
+  {
+    id: "h1",
+    title: "Krok 3: Nagłówek H1",
+    what: "H1 to główny nagłówek strony — powinien być jeden i zawierać kluczową frazę.",
+    why: "Bez H1 Google i AI muszą samodzielnie dedukować temat strony, co obniża relevance i szansę na cytowanie.",
+    tip: "H1 powinien być zgodny z tytułem strony, ale może być nieco dłuższy i bardziej opisowy.",
+  },
+  {
+    id: "schema",
+    title: "Krok 4: Schema markup",
+    what: "Dane strukturalne (JSON-LD) mówią Google i AI jakiego typu jest strona — Article, Product, LocalBusiness.",
+    why: "Schema umożliwia rich results (oceny, ceny, daty) i pomaga AI rozumieć encje na stronie.",
+    tip: "Sprawdź typ schema — LocalBusiness dla agencji, Article dla bloga, Product dla sklepu.",
+  },
+  {
+    id: "eeat",
+    title: "Krok 5: E-E-A-T",
+    what: "Experience, Expertise, Authoritativeness, Trustworthiness — sygnały wiarygodności autora i strony.",
+    why: "Google premiuje strony które wyraźnie pokazują kto je tworzy, jakie ma doświadczenie i kim jest. AI preferuje cytowanie źródeł z wyraźną ekspertyzą.",
+    tip: "Dodaj autora, bio, datę publikacji, credentials — szczególnie ważne dla treści YMYL (zdrowie, finanse, prawo).",
+  },
+  {
+    id: "facts",
+    title: "Krok 6: Konkretne fakty",
+    what: "Liczby, daty, statystyki, wyniki — dane które AI może wyciągnąć i zacytować.",
+    why: "AI cytuje konkrety, nie ogólniki. Strona bez liczb i danych ma niski Extractability — niska szansa na pojawienie się w odpowiedziach AI.",
+    tip: "Zamiast 'wielu klientów' napisz '1 200 klientów od 2009'. Zamiast 'szybki wzrost' napisz '+180% ruchu organicznego'.",
+  },
+  {
+    id: "canonical",
+    title: "Krok 7: Canonical URL",
+    what: "Tag canonical wskazuje Google kanoniczną (główną) wersję strony.",
+    why: "Bez canonical Google może traktować wiele URL jako osobne strony z duplikatami treści — rozmywa to sygnały rankingowe.",
+    tip: "Szczególnie ważne w e-commerce (filtry, sortowanie) i gdy treść jest syndykowana na innych domenach.",
+  },
+  {
+    id: "external",
+    title: "Krok 8: Wzmianki zewnętrzne",
+    what: "Cytowania marki w serwisach branżowych, mediach, social media — poza Twoją domeną.",
+    why: "To najsilniejszy sygnał authority dla AI. Modele językowe walidują marki przez zewnętrzne źródła — nieznana marka jest pomijana.",
+    tip: "Dąż do wzmianek na stronach o wysokim autorytecie w branży (Moz, Search Engine Journal, Marketer+ itp.).",
+  },
+];
+
 type ScoreWeights = {
   authority: { external: number; eeat: number; schema: number; links: number; sitemap: number };
   relevance: { keywords: number; h1: number; headings: number; title: number; meta: number };
@@ -467,6 +534,8 @@ export default function SimulatorClient() {
   const [tab, setTab] = useState<TabId>("googlebot");
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [pageType, setPageType] = useState<PageType>("agencja");
+  // null = off, 0..7 = step index, 8 = summary
+  const [wizardStep, setWizardStep] = useState<number | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -573,11 +642,152 @@ export default function SimulatorClient() {
           <button onClick={resetAll} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">↺ Włącz wszystko</button>
           <span className="text-zinc-300">·</span>
           <button onClick={disableAll} className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors cursor-pointer">✕ Wyłącz wszystko</button>
+          <span className="text-zinc-300">·</span>
+          <button
+            onClick={() => { resetAll(); setWizardStep(0); }}
+            className="text-xs font-medium text-purple-700 hover:text-purple-900 transition-colors cursor-pointer"
+          >
+            📋 Tryb audytu →
+          </button>
         </div>
       </div>
 
+      {/* ── Wizard mode ── */}
+      {wizardStep !== null && (() => {
+        const isSummary = wizardStep >= AUDIT_STEPS.length;
+        const step = isSummary ? null : AUDIT_STEPS[wizardStep];
+        const issues = AUDIT_STEPS.filter((s) => !active[s.id]);
+        const progress = Math.round(((isSummary ? AUDIT_STEPS.length : wizardStep) / AUDIT_STEPS.length) * 100);
+
+        return (
+          <div className="max-w-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-xs text-zinc-400">
+                    {isSummary ? "Audyt ukończony" : `Krok ${wizardStep + 1} z ${AUDIT_STEPS.length}`}
+                  </span>
+                  <div className="flex-1 max-w-48 h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-purple-400 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+                  </div>
+                  <span className="text-xs text-zinc-400">{progress}%</span>
+                </div>
+              </div>
+              <button
+                onClick={() => { setWizardStep(null); resetAll(); }}
+                className="text-xs text-zinc-400 hover:text-zinc-700 transition-colors cursor-pointer ml-4"
+              >
+                ✕ Wróć do symulatora
+              </button>
+            </div>
+
+            {isSummary ? (
+              /* ── Summary ── */
+              <div className="border border-zinc-200 rounded-xl p-6">
+                <h2 className="text-xl font-semibold text-purple-800 mb-1">Podsumowanie audytu</h2>
+                <p className="text-sm text-zinc-500 mb-6">
+                  Sprawdzono {AUDIT_STEPS.length} elementów strony.
+                </p>
+                {issues.length === 0 ? (
+                  <div className="bg-emerald-50 border border-emerald-100 rounded-lg px-4 py-3 mb-6">
+                    <p className="text-sm font-medium text-emerald-800">✅ Wszystkie elementy są włączone — strona wygląda dobrze!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2 mb-6">
+                    <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">
+                      {issues.length === 1 ? "1 element wymaga uwagi" : `${issues.length} elementy wymagają uwagi`}
+                    </p>
+                    {issues.map((s) => (
+                      <div key={s.id} className="flex items-start gap-3 bg-amber-50 border border-amber-100 rounded-lg px-4 py-3">
+                        <span className="text-base shrink-0">⚠️</span>
+                        <div>
+                          <p className="text-sm font-medium text-amber-900">{s.title.replace(/^Krok \d+: /, "")}</p>
+                          <p className="text-xs text-amber-700 mt-0.5">{s.tip}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setWizardStep(0)}
+                    className="text-sm px-4 py-2 border border-zinc-200 rounded-lg text-zinc-600 hover:border-zinc-300 hover:text-zinc-900 transition-all cursor-pointer"
+                  >
+                    ↺ Zacznij od nowa
+                  </button>
+                  <button
+                    onClick={() => setWizardStep(null)}
+                    className="text-sm px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-colors cursor-pointer"
+                  >
+                    → Otwórz w symulatorze
+                  </button>
+                </div>
+              </div>
+            ) : step && (
+              /* ── Step ── */
+              <div className="border border-zinc-200 rounded-xl p-6">
+                <h2 className="text-lg font-semibold text-purple-800 mb-4">{step.title}</h2>
+
+                <div className="space-y-3 mb-6">
+                  <div>
+                    <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1">Co to jest</p>
+                    <p className="text-sm text-zinc-700">{step.what}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1">Dlaczego ważne</p>
+                    <p className="text-sm text-zinc-700">{step.why}</p>
+                  </div>
+                  <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3">
+                    <p className="text-xs font-medium text-blue-700 mb-0.5">💡 Co sprawdzić</p>
+                    <p className="text-xs text-blue-800">{step.tip}</p>
+                  </div>
+                </div>
+
+                {/* Toggle simulation */}
+                <div className="border border-zinc-100 rounded-lg px-4 py-3 mb-6 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-zinc-400 mb-0.5">Symulacja na mock stronie</p>
+                    <p className="text-sm font-medium text-zinc-700">
+                      {active[step.id] ? "✅ Element włączony" : "❌ Element wyłączony"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => toggle(step.id)}
+                    className={`text-xs px-3 py-1.5 rounded-full border cursor-pointer transition-all ${
+                      active[step.id]
+                        ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                        : "border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                    }`}
+                  >
+                    {active[step.id] ? "Wyłącz — sprawdź efekt" : "Włącz — przywróć"}
+                  </button>
+                </div>
+
+                {/* Navigation */}
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => setWizardStep((s) => Math.max(0, (s ?? 1) - 1))}
+                    disabled={wizardStep === 0}
+                    className="text-sm px-4 py-2 border border-zinc-200 rounded-lg text-zinc-600 hover:border-zinc-300 hover:text-zinc-900 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    ← Wstecz
+                  </button>
+                  <button
+                    onClick={() => setWizardStep((s) => ((s ?? 0) + 1))}
+                    className="text-sm px-4 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-colors cursor-pointer"
+                  >
+                    {wizardStep === AUDIT_STEPS.length - 1 ? "Zakończ audyt →" : "Dalej →"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* Main layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      {wizardStep === null && <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
         {/* ── Left: Interactive mock page ── */}
         <div>
@@ -865,7 +1075,7 @@ export default function SimulatorClient() {
           </div>
         </div>
 
-      </div>
+      </div>}
     </main>
   );
 }
