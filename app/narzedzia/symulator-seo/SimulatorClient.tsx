@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 
 type ToggleId =
@@ -65,11 +65,11 @@ function buildGbItems(a: Record<ToggleId, boolean>): Item[] {
     return [{ label: "Indeksowanie", value: "NOINDEX", status: "error", note: "Strona zablokowana dla Google. Pozostałe elementy są bez znaczenia." }];
   return [
     { label: "Indeksowanie", value: "INDEX, FOLLOW", status: "ok" },
-    { label: "Tytuł strony", value: a.title ? '"Agencja SEO Warszawa | Widoczni"' : "[brak]", status: a.title ? "ok" : "warn", note: a.title ? undefined : "Google wygeneruje własny tytuł — zwykle słabszy pod kątem CTR." },
+    { label: "Tytuł strony", value: a.title ? '"Agencja SEO Poznań | Widoczni"' : "[brak]", status: a.title ? "ok" : "warn", note: a.title ? undefined : "Google wygeneruje własny tytuł — zwykle słabszy pod kątem CTR." },
     { label: "Meta description", value: a.meta ? '"Pozycjonujemy od 2009. 1 200+ klientów, +180% ruchu."' : "[brak]", status: a.meta ? "ok" : "warn", note: a.meta ? undefined : "Google wytnie losowy fragment z treści strony." },
-    { label: "H1", value: a.h1 ? '"Agencja SEO Warszawa — pozycjonowanie stron"' : "[brak]", status: a.h1 ? "ok" : "warn", note: a.h1 ? undefined : "Google nie ma wyraźnego sygnału o głównym temacie." },
+    { label: "H1", value: a.h1 ? '"Agencja SEO Poznań — pozycjonowanie stron"' : "[brak]", status: a.h1 ? "ok" : "warn", note: a.h1 ? undefined : "Google nie ma wyraźnego sygnału o głównym temacie." },
     { label: "Struktura nagłówków", value: a.headings ? "H1 → H2 ×3 → H3 ×2" : "brak hierarchii", status: a.headings ? "ok" : "warn", note: a.headings ? undefined : "Brak struktury utrudnia Google zrozumienie podziału treści." },
-    { label: "Słowa kluczowe", value: a.keywords ? "agencja SEO, pozycjonowanie, Warszawa — w tytule, H1, treści" : "[brak sygnałów fraz]", status: a.keywords ? "ok" : "warn", note: a.keywords ? undefined : "Brak fraz kluczowych — Google nie wie pod co rankować stronę." },
+    { label: "Słowa kluczowe", value: a.keywords ? "agencja SEO, pozycjonowanie, Poznań — w tytule, H1, treści" : "[brak sygnałów fraz]", status: a.keywords ? "ok" : "warn", note: a.keywords ? undefined : "Brak fraz kluczowych — Google nie wie pod co rankować stronę." },
     { label: "Schema markup", value: a.schema ? "LocalBusiness — rich result możliwy" : "[brak]", status: a.schema ? "ok" : "info", note: a.schema ? undefined : "Brak danych strukturalnych. Brak możliwości rich results." },
     { label: "Core Web Vitals", value: a.vitals ? "LCP 1.8s ✅  CLS 0.05 ✅  INP 180ms ✅" : "LCP 4.5s ❌  CLS 0.42 ❌  INP 620ms ❌", status: a.vitals ? "ok" : "warn", note: a.vitals ? undefined : "Słabe CWV to sygnał rankingowy — Google preferuje szybsze strony." },
     { label: "E-E-A-T", value: a.eeat ? "Autor, credentials, About page — sygnały obecne" : "[brak sygnałów ekspertyzy]", status: a.eeat ? "ok" : "warn", note: a.eeat ? undefined : "Brak autora i bio. Google trudniej ocenić wiarygodność strony." },
@@ -102,7 +102,7 @@ function buildRagItems(a: Record<ToggleId, boolean>): Item[] {
     { label: "E-E-A-T → Authority", value: a.eeat ? "Kredencjały autora zwiększają wiarygodność cytowania" : "Brak sygnałów ekspertyzy", status: a.eeat ? "ok" : "warn", note: a.eeat ? undefined : "AI preferuje cytowanie źródeł z wyraźną ekspertyzą i autorem." },
     {
       label: "Query fan-out coverage",
-      value: a.keywords && a.headings ? "Pokrycie: agencja SEO, pozycjonowanie, SEO Warszawa, specjalizacje"
+      value: a.keywords && a.headings ? "Pokrycie: agencja SEO, pozycjonowanie, SEO Poznań, specjalizacje"
         : a.keywords || a.headings ? "Częściowe pokrycie intencji" : "Słabe pokrycie intencji",
       status: a.keywords && a.headings ? "ok" : a.keywords || a.headings ? "warn" : "error",
       note: a.keywords && a.headings ? undefined : "AI generuje wiele podzapytań — bez fraz i nagłówków strona nie odpowiada na żadne.",
@@ -160,9 +160,24 @@ function ItemRow({ item }: { item: Item }) {
 export default function SimulatorClient() {
   const [active, setActive] = useState<Record<ToggleId, boolean>>(INITIAL);
   const [tab, setTab] = useState<TabId>("googlebot");
+  const [toast, setToast] = useState<string | null>(null);
+  const toastRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const toggle = (id: ToggleId) => setActive((p) => ({ ...p, [id]: !p[id] }));
-  const resetAll = () => setActive(INITIAL);
+  const toggle = (id: ToggleId) => {
+    setActive((p) => {
+      const next = !p[id];
+      if (!next) {
+        const def = ALL_TOGGLES.find((t) => t.id === id);
+        if (def) {
+          if (toastRef.current) clearTimeout(toastRef.current);
+          setToast(def.label);
+          toastRef.current = setTimeout(() => setToast(null), 2500);
+        }
+      }
+      return { ...p, [id]: next };
+    });
+  };
+  const resetAll = () => { setActive(INITIAL); setToast(null); };
   const disableAll = () =>
     setActive(Object.fromEntries(Object.keys(INITIAL).map((k) => [k, false])) as Record<ToggleId, boolean>);
 
@@ -229,7 +244,7 @@ export default function SimulatorClient() {
                 <div className="w-3 h-3 rounded-full bg-zinc-300" />
               </div>
               <div className="flex-1 bg-white border border-zinc-200 rounded px-3 py-1 text-xs text-zinc-500 font-mono flex items-center justify-between">
-                <span>widoczni.com/agencja-seo-warszawa</span>
+                <span>widoczni.com/agencja-seo-poznan</span>
                 {active.sitemap && <span title="sitemap.xml" className="text-zinc-400">🗺</span>}
               </div>
               <span className={`text-xs px-2 py-0.5 rounded font-medium ${active.vitals ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
@@ -239,19 +254,70 @@ export default function SimulatorClient() {
 
             {/* HTML <head> */}
             <div className="bg-zinc-900 px-4 py-3 space-y-1.5 text-xs font-mono">
-              {[
-                { id: "robots" as const, code: `<meta name="robots" content="${active.robots ? "index, follow" : "noindex"}" />`, warn: !active.robots },
-                { id: "title" as const, code: `<title>Agencja SEO Warszawa | Widoczni</title>` },
-                { id: "meta" as const, code: `<meta name="description" content="Pozycjonujemy od 2009..." />` },
-                { id: "canonical" as const, code: `<link rel="canonical" href="https://widoczni.com/agencja-seo-warszawa" />` },
-                { id: "og" as const, code: `<meta property="og:title" content="Agencja SEO Warszawa | Widoczni" />` },
-                { id: "schema" as const, code: `<script type="application/ld+json">{ "@type": "LocalBusiness" }</script>` },
-              ].map(({ id, code, warn }) => (
-                <div key={id} className={`transition-opacity duration-200 ${active[id] ? "opacity-100" : "opacity-25"}`}>
-                  <span className={`text-zinc-300 ${!active[id] ? "line-through" : ""}`}>{code}</span>
-                  {warn && !active[id] && <span className="text-red-400 ml-2">← strona niewidoczna!</span>}
-                </div>
-              ))}
+
+              {/* robots */}
+              <div className={`transition-opacity duration-200 ${active.robots ? "opacity-100" : "opacity-25"}`}>
+                <span className="text-zinc-500">&lt;meta </span>
+                <span className="text-emerald-400">name</span>
+                <span className="text-zinc-500">=</span>
+                <span className="text-amber-300">&quot;robots&quot;</span>
+                <span className="text-zinc-500"> content=</span>
+                <span className={`text-amber-300 ${!active.robots ? "line-through" : ""}`}>&quot;{active.robots ? "index, follow" : "noindex"}&quot;</span>
+                <span className="text-zinc-500"> /&gt;</span>
+                {!active.robots && <span className="text-red-400 ml-2">← strona niewidoczna!</span>}
+              </div>
+
+              {/* title */}
+              <div className={`transition-opacity duration-200 ${active.title ? "opacity-100" : "opacity-25"}`}>
+                <span className="text-zinc-500">&lt;title&gt;</span>
+                <span className={`text-zinc-300 ${!active.title ? "line-through" : ""}`}>Agencja SEO Poznań | Widoczni</span>
+                <span className="text-zinc-500">&lt;/title&gt;</span>
+              </div>
+
+              {/* meta description */}
+              <div className={`transition-opacity duration-200 ${active.meta ? "opacity-100" : "opacity-25"}`}>
+                <span className="text-zinc-500">&lt;meta </span>
+                <span className="text-emerald-400">name</span>
+                <span className="text-zinc-500">=</span>
+                <span className="text-amber-300">&quot;description&quot;</span>
+                <span className="text-zinc-500"> content=</span>
+                <span className={`text-amber-300 ${!active.meta ? "line-through" : ""}`}>&quot;Pozycjonujemy od 2009...&quot;</span>
+                <span className="text-zinc-500"> /&gt;</span>
+              </div>
+
+              {/* canonical */}
+              <div className={`transition-opacity duration-200 ${active.canonical ? "opacity-100" : "opacity-25"}`}>
+                <span className="text-zinc-500">&lt;link </span>
+                <span className="text-emerald-400">rel</span>
+                <span className="text-zinc-500">=</span>
+                <span className="text-amber-300">&quot;canonical&quot;</span>
+                <span className="text-zinc-500"> href=</span>
+                <span className={`text-amber-300 ${!active.canonical ? "line-through" : ""}`}>&quot;https://widoczni.com/agencja-seo-poznan&quot;</span>
+                <span className="text-zinc-500"> /&gt;</span>
+              </div>
+
+              {/* og:title */}
+              <div className={`transition-opacity duration-200 ${active.og ? "opacity-100" : "opacity-25"}`}>
+                <span className="text-zinc-500">&lt;meta </span>
+                <span className="text-emerald-400">property</span>
+                <span className="text-zinc-500">=</span>
+                <span className="text-amber-300">&quot;og:title&quot;</span>
+                <span className="text-zinc-500"> content=</span>
+                <span className={`text-amber-300 ${!active.og ? "line-through" : ""}`}>&quot;Agencja SEO Poznań | Widoczni&quot;</span>
+                <span className="text-zinc-500"> /&gt;</span>
+              </div>
+
+              {/* schema */}
+              <div className={`transition-opacity duration-200 ${active.schema ? "opacity-100" : "opacity-25"}`}>
+                <span className="text-zinc-500">&lt;script </span>
+                <span className="text-emerald-400">type</span>
+                <span className="text-zinc-500">=</span>
+                <span className="text-amber-300">&quot;application/ld+json&quot;</span>
+                <span className="text-zinc-500">&gt; </span>
+                <span className={`text-blue-400 ${!active.schema ? "line-through" : ""}`}>{`{ "@type": "LocalBusiness" }`}</span>
+                <span className="text-zinc-500"> &lt;/script&gt;</span>
+              </div>
+
             </div>
 
             {/* Page body */}
@@ -260,7 +326,7 @@ export default function SimulatorClient() {
               {/* H1 */}
               <div className={`transition-opacity duration-200 ${active.h1 ? "opacity-100" : "opacity-25"}`}>
                 <p className={`text-lg font-bold text-zinc-900 leading-tight ${!active.h1 ? "line-through" : ""}`}>
-                  {active.keywords ? "Agencja SEO Warszawa — pozycjonowanie stron" : "Agencja SEO, która dowozi wyniki"}
+                  {active.keywords ? "Agencja SEO Poznań — pozycjonowanie stron" : "Agencja SEO, która dowozi wyniki"}
                 </p>
                 <p className="text-xs text-zinc-400 mt-0.5">
                   ← H1{active.keywords ? " z frazami kluczowymi" : " — brak fraz kluczowych"}
@@ -279,7 +345,7 @@ export default function SimulatorClient() {
               {/* H2 */}
               <div className={`transition-opacity duration-200 ${active.headings ? "opacity-100" : "opacity-25"}`}>
                 <p className={`font-semibold text-zinc-800 text-sm ${!active.headings ? "line-through" : ""}`}>
-                  {active.keywords ? "Pozycjonowanie stron Warszawa — dlaczego Widoczni?" : "Dlaczego klienci wybierają Widoczni?"}
+                  {active.keywords ? "Pozycjonowanie stron Poznań — dlaczego Widoczni?" : "Dlaczego klienci wybierają Widoczni?"}
                 </p>
                 <p className="text-xs text-zinc-400">← H2</p>
               </div>
@@ -330,6 +396,14 @@ export default function SimulatorClient() {
         {/* ── Right: Analysis ── */}
         <div>
           <p className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3">Analiza</p>
+
+          {/* Toast */}
+          {toast && (
+            <div className="flex items-center gap-2 text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2.5 mb-3 transition-all">
+              <span className="text-base">⚠️</span>
+              <span><strong>{toast}</strong> wyłączony — sprawdź zmiany w analizie</span>
+            </div>
+          )}
 
           {/* Tab bar */}
           <div className="flex gap-1 bg-zinc-100 rounded-lg p-1 mb-4">
@@ -419,7 +493,7 @@ export default function SimulatorClient() {
                     </div>
                     <p className={`font-medium text-sm mb-1 leading-tight ${active.title ? "text-blue-600" : "text-zinc-500 italic"}`}>
                       {active.title
-                        ? "Agencja SEO Warszawa | Widoczni — Pozycjonowanie Stron"
+                        ? "Agencja SEO Poznań | Widoczni — Pozycjonowanie Stron"
                         : "Widoczni - Strona główna (auto-generated by Google)"}
                     </p>
                     <p className={`text-xs leading-relaxed ${active.meta ? "text-zinc-600" : "text-zinc-400 italic"}`}>
@@ -461,8 +535,8 @@ export default function SimulatorClient() {
                     <div className="px-4 py-3 bg-white">
                       <p className="text-xs text-zinc-400 uppercase mb-1">WIDOCZNI.COM</p>
                       <p className={`font-semibold text-sm ${active.og || active.title ? "text-zinc-900" : "text-zinc-400"}`}>
-                        {active.og ? "Agencja SEO Warszawa — Widoczni"
-                          : active.title ? "Agencja SEO Warszawa | Widoczni"
+                        {active.og ? "Agencja SEO Poznań — Widoczni"
+                          : active.title ? "Agencja SEO Poznań | Widoczni"
                           : "widoczni.com"}
                       </p>
                       <p className="text-xs text-zinc-500 mt-0.5">
