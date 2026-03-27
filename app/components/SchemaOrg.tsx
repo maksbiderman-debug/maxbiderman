@@ -6,7 +6,7 @@ type ArticleSchema = {
   type: "Article";
   title: string;
   description: string;
-  datePublished: string;
+  datePublished?: string;
   url: string;
 };
 
@@ -35,7 +35,7 @@ export default function SchemaOrg(props: Props) {
       "@type": "Article",
       headline: props.title,
       description: props.description,
-      datePublished: props.datePublished,
+      ...(props.datePublished ? { datePublished: props.datePublished } : {}),
       url: props.url,
       author: {
         "@type": "Person",

@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description:
     "Piszę o digital marketingu, organizuję wiedzę i agreguje ciekawe narzędzia. Głównie dla siebie, ale może przyda się też Tobie.",
   metadataBase: new URL("https://maxbiderman.pl"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Maks Biderman",
     description:

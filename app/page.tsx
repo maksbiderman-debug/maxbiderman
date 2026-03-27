@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Maks Biderman — digital marketing i SEO",
+  description:
+    "Piszę o digital marketingu, organizuję wiedzę i agreguje ciekawe narzędzia. Głównie dla siebie, ale może przyda się też Tobie.",
+  alternates: {
+    canonical: "/",
+  },
+};
+
 export default function Home() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-24">
