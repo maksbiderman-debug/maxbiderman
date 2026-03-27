@@ -10,7 +10,7 @@ export const searchIndex: SearchItem[] = [
   { title: "Strona główna", description: "Piszę o digital marketingu, organizuję wiedzę i agreguje ciekawe narzędzia.", url: "/", category: "Strona" },
   { title: "Blog", description: "Notatki i przemyślenia z pracy w digital marketingu.", url: "/blog", category: "Strona" },
   { title: "Baza wiedzy", description: "Zebrana wiedza z obszaru digital marketingu.", url: "/baza-wiedzy", category: "Strona" },
-  { title: "Symulator SEO", description: "Włączaj i wyłączaj elementy strony — sprawdź jak widzi ją Googlebot i AI.", url: "/narzedzia/symulator-seo", category: "Narzędzie" },
+  { title: "Symulator SEO", description: "Włączaj i wyłączaj elementy strony — sprawdź jak widzi ją Googlebot i AI.", url: "/narzedzie/symulator-seo", category: "Narzędzie" },
   // Blog
   { title: "Czym jest SEO i dlaczego warto je znać?", description: "Wprowadzenie do optymalizacji dla wyszukiwarek.", url: "/blog/czym-jest-seo", category: "Blog" },
   // Baza wiedzy – SEO

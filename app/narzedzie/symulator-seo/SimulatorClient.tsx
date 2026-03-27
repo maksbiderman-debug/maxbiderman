@@ -194,7 +194,7 @@ export default function SimulatorClient() {
   return (
     <main className="max-w-5xl mx-auto px-6 py-24">
       <div className="mb-10">
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 mb-3">Symulator SEO</h1>
+        <h1 className="text-3xl font-semibold tracking-tight text-zinc-700 mb-3">Symulator SEO</h1>
         <p className="text-zinc-500 max-w-2xl">
           Włączaj i wyłączaj elementy strony — sprawdź jak reaguje Googlebot, jak AI (RAG) decyduje o cytowaniu, jak zmienia się score A/R/E i jak strona wygląda w Google i social media.
         </p>

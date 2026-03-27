@@ -24,10 +24,10 @@ export default function Nav() {
           Baza wiedzy
         </Link>
         <Link
-          href="/narzedzia/symulator-seo"
+          href="/narzedzie/symulator-seo"
           className="text-zinc-600 hover:text-zinc-900 transition-colors"
         >
-          Narzędzia
+          Narzędzie
         </Link>
         <div className="ml-auto">
           <Search />

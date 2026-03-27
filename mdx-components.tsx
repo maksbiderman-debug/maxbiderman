@@ -3,17 +3,17 @@ import type { MDXComponents } from "mdx/types";
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     h1: ({ children }) => (
-      <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 mb-4 mt-8">
+      <h1 className="text-3xl font-semibold tracking-tight text-zinc-700 mb-4 mt-8">
         {children}
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="text-2xl font-semibold text-zinc-900 mb-3 mt-10">
+      <h2 className="text-2xl font-semibold text-zinc-700 mb-3 mt-10">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-xl font-semibold text-zinc-900 mb-2 mt-6">
+      <h3 className="text-xl font-semibold text-zinc-700 mb-2 mt-6">
         {children}
       </h3>
     ),

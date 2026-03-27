@@ -20,7 +20,7 @@ const posts = [
 export default function BlogPage() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-24">
-      <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 mb-2">
+      <h1 className="text-3xl font-semibold tracking-tight text-zinc-700 mb-2">
         Blog
       </h1>
       <p className="text-zinc-500 mb-12">
